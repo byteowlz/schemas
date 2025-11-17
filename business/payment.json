@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Payment",
+  "description": "Schema for payment records in the based business management system",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "invoice_id": {
+      "type": "integer",
+      "description": "ID of the invoice this payment is for"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when payment was received"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Payment amount",
+      "minimum": 0
+    },
+    "method": {
+      "type": "string",
+      "enum": ["bank_transfer", "cash", "card", "paypal", "other"],
+      "description": "Payment method"
+    },
+    "reference": {
+      "type": "string",
+      "description": "Payment reference number (transaction ID, check number, etc.)"
+    }
+  },
+  "required": ["invoice_id", "paid_at", "amount", "method"]
+}

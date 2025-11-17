@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Party",
+  "description": "Schema for a party entity (person or organization) in the based business management system",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier (database-assigned)"
+    },
+    "party_type": {
+      "type": "string",
+      "enum": ["person", "organization"],
+      "description": "Type of party"
+    },
+    "legal_name": {
+      "type": "string",
+      "description": "Legal name of the person or organization",
+      "minLength": 1
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Display name (optional, for shorter/preferred names)"
+    },
+    "is_client": {
+      "type": "boolean",
+      "description": "Whether this party is a client",
+      "default": false
+    },
+    "is_vendor": {
+      "type": "boolean",
+      "description": "Whether this party is a vendor",
+      "default": false
+    },
+    "tax_id": {
+      "type": "string",
+      "description": "Tax identification number (VAT, EIN, etc.)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": ["party_type", "legal_name"]
+}

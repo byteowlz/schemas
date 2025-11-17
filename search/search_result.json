@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SearXNG Search Result",
+  "description": "Schema for search results from SearXNG instances (sx CLI tool)",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the search result"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the result"
+    },
+    "content": {
+      "type": "string",
+      "description": "Content snippet/description"
+    },
+    "engine": {
+      "type": "string",
+      "description": "Primary search engine that returned this result"
+    },
+    "engines": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of all engines that returned this result"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category of the result (general, news, images, etc.)"
+    },
+    "template": {
+      "type": "string",
+      "description": "Template type for rendering"
+    },
+    "publishedDate": {
+      "type": "string",
+      "description": "Published date (if available)"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author of the content"
+    },
+    "length": {
+      "description": "Length/duration (flexible type for different content)",
+      "oneOf": [
+        {"type": "string"},
+        {"type": "number"},
+        {"type": "null"}
+      ]
+    },
+    "source": {
+      "type": "string",
+      "description": "Source of the content"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "Image/video resolution"
+    },
+    "img_src": {
+      "type": "string",
+      "format": "uri",
+      "description": "Image source URL"
+    },
+    "address": {
+      "type": "object",
+      "description": "Physical address information (for map results)",
+      "additionalProperties": true
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Geographic longitude"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Geographic latitude"
+    },
+    "journal": {
+      "type": "string",
+      "description": "Journal name (for academic results)"
+    },
+    "publisher": {
+      "type": "string",
+      "description": "Publisher name"
+    },
+    "magnetlink": {
+      "type": "string",
+      "description": "Magnet link (for torrent results)"
+    },
+    "seed": {
+      "type": "integer",
+      "description": "Number of seeders (for torrent results)"
+    },
+    "leech": {
+      "type": "integer",
+      "description": "Number of leechers (for torrent results)"
+    },
+    "filesize": {
+      "type": "string",
+      "description": "File size"
+    },
+    "size": {
+      "type": "string",
+      "description": "Size (alternative field)"
+    },
+    "metadata": {
+      "type": "string",
+      "description": "Additional metadata"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}
