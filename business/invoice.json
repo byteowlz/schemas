@@ -1,0 +1,923 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://based.example.com/schemas/invoice.json",
+  "title": "Invoice",
+  "description": "Complete invoice schema supporting XRechnung/EN 16931 generation",
+  "type": "object",
+  "required": [
+    "invoice_number",
+    "invoice_date",
+    "currency_code",
+    "seller",
+    "buyer",
+    "line_items",
+    "payment_terms",
+    "totals"
+  ],
+  "properties": {
+    "invoice_number": {
+      "type": "string",
+      "description": "Unique invoice identifier (ram:ID)",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["2025-001", "INV-2025-0001"]
+    },
+    "invoice_type_code": {
+      "type": "string",
+      "description": "Document type code (380=invoice, 381=credit note, 384=corrected invoice, 389=self-billed invoice)",
+      "enum": ["380", "381", "384", "389"],
+      "default": "380"
+    },
+    "invoice_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Invoice issue date (ISO 8601: YYYY-MM-DD)",
+      "examples": ["2025-03-28"]
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Payment due date (ISO 8601: YYYY-MM-DD)",
+      "examples": ["2025-04-11"]
+    },
+    "service_delivery_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when service was delivered or goods were shipped",
+      "examples": ["2025-03-28"]
+    },
+    "buyer_reference": {
+      "type": "string",
+      "description": "REQUIRED for German public sector (Leitweg-ID). Buyer's project or reference number",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["PROJ-2025-001", "04011000-12345-34"]
+    },
+    "currency_code": {
+      "type": "string",
+      "description": "ISO 4217 currency code",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR",
+      "examples": ["EUR", "USD", "GBP"]
+    },
+    "notes": {
+      "type": "array",
+      "description": "Invoice notes and remarks",
+      "items": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Note text content",
+            "minLength": 1
+          },
+          "subject_code": {
+            "type": "string",
+            "description": "Note subject code (REG=Regulatory, AAI=General, etc.)",
+            "examples": ["REG", "AAI", "ABL", "TXD"]
+          }
+        }
+      }
+    },
+    "business_process_id": {
+      "type": "string",
+      "description": "Business process identifier",
+      "default": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"
+    },
+    "guideline_id": {
+      "type": "string",
+      "description": "Specification identifier",
+      "default": "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0"
+    },
+    "seller": {
+      "type": "object",
+      "description": "Seller/supplier party information",
+      "required": ["name", "address", "contact", "tax_registrations"],
+      "properties": {
+        "global_id": {
+          "type": "object",
+          "description": "Global identifier (e.g., GLN)",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The identifier value",
+              "examples": ["4000001123452"]
+            },
+            "scheme_id": {
+              "type": "string",
+              "description": "Scheme identifier (0088=GLN, 0060=DUNS, 0177=ODETTE, etc.)",
+              "examples": ["0088", "0060", "0177"]
+            }
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "Legal business name",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": ["Ihre Beratung GmbH"]
+        },
+        "trade_name": {
+          "type": "string",
+          "description": "Trading name (if different from legal name)",
+          "maxLength": 200
+        },
+        "address": {
+          "$ref": "#/definitions/address"
+        },
+        "contact": {
+          "type": "object",
+          "description": "REQUIRED contact information for seller",
+          "required": ["name"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Contact person name",
+              "examples": ["Max Mustermann"]
+            },
+            "department": {
+              "type": "string",
+              "description": "Department name",
+              "examples": ["Sales", "Billing"]
+            },
+            "phone": {
+              "type": "string",
+              "description": "Phone number with country code",
+              "examples": ["+49 123 456-789"]
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Email address",
+              "examples": ["max.mustermann@ihreberatung.de"]
+            }
+          }
+        },
+        "electronic_address": {
+          "type": "object",
+          "description": "REQUIRED electronic address for routing",
+          "required": ["id", "scheme_id"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Electronic address value",
+              "examples": ["rechnung@ihreberatung.de"]
+            },
+            "scheme_id": {
+              "type": "string",
+              "description": "Address scheme (EM=Email, PEPPOL=Peppol ID, etc.)",
+              "examples": ["EM", "PEPPOL"]
+            }
+          }
+        },
+        "tax_registrations": {
+          "type": "object",
+          "description": "Tax registration numbers",
+          "required": ["vat_id"],
+          "properties": {
+            "tax_number": {
+              "type": "string",
+              "description": "National tax number (FC scheme ID)",
+              "examples": ["12345678901"]
+            },
+            "vat_id": {
+              "type": "string",
+              "description": "VAT identification number (VA scheme ID)",
+              "pattern": "^[A-Z]{2}.*$",
+              "examples": ["DE123456789"]
+            }
+          }
+        },
+        "legal_registration": {
+          "type": "object",
+          "description": "Legal registration information (company register)",
+          "properties": {
+            "registration_name": {
+              "type": "string",
+              "description": "Register name",
+              "examples": ["Handelsregisternummer"]
+            },
+            "registration_id": {
+              "type": "string",
+              "description": "Registration number",
+              "examples": ["HRA 123"]
+            }
+          }
+        }
+      }
+    },
+    "buyer": {
+      "type": "object",
+      "description": "Buyer/customer party information",
+      "required": ["name", "address"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Buyer identifier (customer number)",
+          "examples": ["K-001", "CUST-12345"]
+        },
+        "global_id": {
+          "type": "object",
+          "description": "Global identifier",
+          "properties": {
+            "id": {
+              "type": "string",
+              "examples": ["4000001123453"]
+            },
+            "scheme_id": {
+              "type": "string",
+              "examples": ["0088"]
+            }
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "Legal business name",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": ["Musterfirma GmbH"]
+        },
+        "address": {
+          "$ref": "#/definitions/address"
+        },
+        "contact": {
+          "type": "object",
+          "description": "Contact information",
+          "properties": {
+            "name": {
+              "type": "string",
+              "examples": ["Anna Mueller"]
+            },
+            "department": {
+              "type": "string",
+              "examples": ["Purchasing"]
+            },
+            "phone": {
+              "type": "string",
+              "examples": ["+49 987 654-321"]
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "examples": ["anna.mueller@musterfirma.de"]
+            }
+          }
+        },
+        "electronic_address": {
+          "type": "object",
+          "description": "REQUIRED electronic address for routing",
+          "required": ["id", "scheme_id"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "examples": ["einkauf@musterfirma.de"]
+            },
+            "scheme_id": {
+              "type": "string",
+              "examples": ["EM"]
+            }
+          }
+        },
+        "tax_registrations": {
+          "type": "object",
+          "description": "Buyer tax registration numbers",
+          "properties": {
+            "vat_id": {
+              "type": "string",
+              "description": "VAT identification number",
+              "pattern": "^[A-Z]{2}.*$",
+              "examples": ["DE987654321"]
+            }
+          }
+        }
+      }
+    },
+    "line_items": {
+      "type": "array",
+      "description": "Invoice line items",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["line_id", "name", "quantity", "unit_code", "unit_price", "line_total", "tax"],
+        "properties": {
+          "line_id": {
+            "type": "string",
+            "description": "Line item number",
+            "examples": ["1", "2", "3"]
+          },
+          "global_id": {
+            "type": "object",
+            "description": "Global product identifier (GTIN, EAN, etc.)",
+            "properties": {
+              "id": {
+                "type": "string",
+                "examples": ["4012345001235"]
+              },
+              "scheme_id": {
+                "type": "string",
+                "description": "0160=GTIN, 0088=EAN, etc.",
+                "examples": ["0160"]
+              }
+            }
+          },
+          "seller_assigned_id": {
+            "type": "string",
+            "description": "Seller's product/article number",
+            "examples": ["TB100A4", "ART-001"]
+          },
+          "buyer_assigned_id": {
+            "type": "string",
+            "description": "Buyer's product/article number",
+            "examples": ["CUST-ART-001"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Product or service name",
+            "minLength": 1,
+            "examples": ["Beratungsleistungen IT-Strategie", "Trennblätter A4"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Additional product description"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Billed quantity",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "examples": [20, 10.5, 1]
+          },
+          "unit_code": {
+            "type": "string",
+            "description": "UN/ECE unit code (HUR=hour, H87=piece, C62=one, KGM=kilogram, MTR=meter, etc.)",
+            "examples": ["HUR", "H87", "C62", "KGM", "MTR", "LTR", "DAY", "MON"]
+          },
+          "unit_price": {
+            "type": "number",
+            "description": "Net price per unit (excluding tax)",
+            "minimum": 0,
+            "examples": [180.00, 9.90, 5.50]
+          },
+          "price_base_quantity": {
+            "type": "number",
+            "description": "Base quantity for unit price (default: 1)",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "default": 1
+          },
+          "line_total": {
+            "type": "number",
+            "description": "Line total amount (quantity × unit_price, excluding tax)",
+            "minimum": 0,
+            "examples": [3600.00, 198.00, 275.00]
+          },
+          "tax": {
+            "type": "object",
+            "description": "Tax information for this line",
+            "required": ["category_code", "rate_percent"],
+            "properties": {
+              "type_code": {
+                "type": "string",
+                "description": "Tax type code",
+                "enum": ["VAT", "GST", "AAA"],
+                "default": "VAT"
+              },
+              "category_code": {
+                "type": "string",
+                "description": "Tax category (S=Standard, E=Exempt, Z=Zero rated, AE=Reverse charge, K=Intra-community supply)",
+                "enum": ["S", "E", "Z", "AE", "K", "G", "O", "L", "M"],
+                "examples": ["S", "E", "Z"]
+              },
+              "rate_percent": {
+                "type": "number",
+                "description": "Tax rate percentage",
+                "minimum": 0,
+                "maximum": 100,
+                "examples": [19, 7, 0]
+              },
+              "exemption_reason": {
+                "type": "string",
+                "description": "Tax exemption reason (required if category is E, AE, K, G, O, L, M)"
+              },
+              "exemption_reason_code": {
+                "type": "string",
+                "description": "Tax exemption reason code"
+              }
+            }
+          },
+          "allowances_charges": {
+            "type": "array",
+            "description": "Line item allowances (discounts) or charges",
+            "items": {
+              "$ref": "#/definitions/allowance_charge"
+            }
+          },
+          "buyer_order_reference": {
+            "type": "string",
+            "description": "Reference to buyer's order line"
+          },
+          "notes": {
+            "type": "array",
+            "description": "Line item notes",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "allowances_charges": {
+      "type": "array",
+      "description": "Document-level allowances (discounts) or charges",
+      "items": {
+        "$ref": "#/definitions/allowance_charge"
+      }
+    },
+    "payment_terms": {
+      "type": "object",
+      "description": "Payment terms and conditions",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Payment terms description",
+          "examples": ["Zahlungsziel: 14 Tage netto", "Payment due within 30 days"]
+        },
+        "due_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Payment due date",
+          "examples": ["2025-04-11"]
+        },
+        "payment_discount_terms": {
+          "type": "object",
+          "description": "Early payment discount (skonto)",
+          "properties": {
+            "discount_percent": {
+              "type": "number",
+              "description": "Discount percentage",
+              "minimum": 0,
+              "maximum": 100,
+              "examples": [2, 3]
+            },
+            "discount_days": {
+              "type": "integer",
+              "description": "Days within which discount applies",
+              "minimum": 0,
+              "examples": [7, 14]
+            },
+            "base_amount": {
+              "type": "number",
+              "description": "Amount to which discount applies"
+            }
+          }
+        }
+      }
+    },
+    "payment_means": {
+      "type": "object",
+      "description": "Payment method and account information",
+      "required": ["type_code"],
+      "properties": {
+        "type_code": {
+          "type": "string",
+          "description": "Payment means type (30=Credit transfer, 48=Card, 49=Direct debit, 58=SEPA credit transfer, 59=SEPA direct debit)",
+          "examples": ["30", "48", "49", "58", "59"]
+        },
+        "information": {
+          "type": "string",
+          "description": "Payment means description",
+          "examples": ["SEPA-Überweisung", "Credit card"]
+        },
+        "payment_reference": {
+          "type": "string",
+          "description": "Payment reference/remittance information",
+          "examples": ["INV-2025-001"]
+        },
+        "creditor_account": {
+          "type": "object",
+          "description": "Payee's bank account",
+          "properties": {
+            "iban": {
+              "type": "string",
+              "description": "IBAN",
+              "pattern": "^[A-Z]{2}[0-9]{2}[A-Z0-9]+$",
+              "examples": ["DE89370400440532013000"]
+            },
+            "account_name": {
+              "type": "string",
+              "description": "Account holder name",
+              "examples": ["Ihre Beratung GmbH"]
+            },
+            "proprietary_id": {
+              "type": "string",
+              "description": "Account number (for non-IBAN accounts)"
+            }
+          }
+        },
+        "creditor_institution": {
+          "type": "object",
+          "description": "Payee's bank",
+          "properties": {
+            "bic": {
+              "type": "string",
+              "description": "BIC/SWIFT code",
+              "pattern": "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$",
+              "examples": ["COBADEFFXXX"]
+            },
+            "name": {
+              "type": "string",
+              "description": "Bank name"
+            }
+          }
+        },
+        "debtor_account": {
+          "type": "object",
+          "description": "Payer's bank account (for direct debit)",
+          "properties": {
+            "iban": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}[0-9]{2}[A-Z0-9]+$"
+            }
+          }
+        },
+        "card_information": {
+          "type": "object",
+          "description": "Payment card information (for card payments)",
+          "properties": {
+            "card_number": {
+              "type": "string",
+              "description": "Masked card number"
+            },
+            "card_holder_name": {
+              "type": "string",
+              "description": "Card holder name"
+            }
+          }
+        }
+      }
+    },
+    "tax_breakdown": {
+      "type": "array",
+      "description": "Tax totals per rate/category (automatically calculated from line items)",
+      "items": {
+        "type": "object",
+        "required": ["category_code", "rate_percent", "taxable_amount", "tax_amount"],
+        "properties": {
+          "type_code": {
+            "type": "string",
+            "enum": ["VAT", "GST", "AAA"],
+            "default": "VAT"
+          },
+          "category_code": {
+            "type": "string",
+            "enum": ["S", "E", "Z", "AE", "K", "G", "O", "L", "M"],
+            "examples": ["S"]
+          },
+          "rate_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "examples": [19, 7]
+          },
+          "taxable_amount": {
+            "type": "number",
+            "description": "Net amount subject to this tax rate",
+            "minimum": 0,
+            "examples": [5100.00, 500.00]
+          },
+          "tax_amount": {
+            "type": "number",
+            "description": "Tax amount for this rate",
+            "minimum": 0,
+            "examples": [969.00, 35.00]
+          },
+          "exemption_reason": {
+            "type": "string",
+            "description": "Exemption reason text"
+          },
+          "exemption_reason_code": {
+            "type": "string",
+            "description": "Exemption reason code"
+          }
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "description": "Invoice monetary totals",
+      "required": ["line_total", "tax_basis_total", "tax_total", "grand_total", "amount_due"],
+      "properties": {
+        "line_total": {
+          "type": "number",
+          "description": "Sum of all line item totals (excluding tax)",
+          "minimum": 0,
+          "examples": [5600.00]
+        },
+        "allowance_total": {
+          "type": "number",
+          "description": "Sum of all document-level allowances",
+          "minimum": 0,
+          "default": 0
+        },
+        "charge_total": {
+          "type": "number",
+          "description": "Sum of all document-level charges",
+          "minimum": 0,
+          "default": 0
+        },
+        "tax_basis_total": {
+          "type": "number",
+          "description": "Net amount subject to tax (line_total - allowances + charges)",
+          "minimum": 0,
+          "examples": [5600.00]
+        },
+        "tax_total": {
+          "type": "number",
+          "description": "Total tax amount",
+          "minimum": 0,
+          "examples": [1004.00]
+        },
+        "grand_total": {
+          "type": "number",
+          "description": "Invoice total including tax (tax_basis_total + tax_total)",
+          "minimum": 0,
+          "examples": [6604.00]
+        },
+        "prepaid_amount": {
+          "type": "number",
+          "description": "Amount already paid",
+          "minimum": 0,
+          "default": 0
+        },
+        "rounding_amount": {
+          "type": "number",
+          "description": "Rounding adjustment",
+          "default": 0
+        },
+        "amount_due": {
+          "type": "number",
+          "description": "Amount to be paid (grand_total - prepaid_amount + rounding_amount)",
+          "examples": [6604.00]
+        }
+      }
+    },
+    "preceding_invoice_reference": {
+      "type": "object",
+      "description": "Reference to preceding invoice (for credit notes or corrected invoices)",
+      "properties": {
+        "invoice_number": {
+          "type": "string",
+          "description": "Previous invoice number"
+        },
+        "issue_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Previous invoice date"
+        }
+      }
+    },
+    "order_reference": {
+      "type": "object",
+      "description": "Reference to buyer's order",
+      "properties": {
+        "order_number": {
+          "type": "string",
+          "description": "Purchase order number"
+        },
+        "order_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Purchase order date"
+        }
+      }
+    },
+    "contract_reference": {
+      "type": "object",
+      "description": "Reference to contract",
+      "properties": {
+        "contract_number": {
+          "type": "string",
+          "description": "Contract number"
+        },
+        "contract_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Contract date"
+        }
+      }
+    },
+    "project_reference": {
+      "type": "string",
+      "description": "Project reference identifier",
+      "examples": ["PROJ-2025-001"]
+    },
+    "additional_documents": {
+      "type": "array",
+      "description": "Additional referenced or attached documents",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "description": "Document identifier"
+          },
+          "document_type_code": {
+            "type": "string",
+            "description": "Document type code (130=Invoice, 916=Related document, etc.)"
+          },
+          "document_description": {
+            "type": "string",
+            "description": "Document description"
+          },
+          "attachment": {
+            "type": "object",
+            "description": "Attached document binary",
+            "properties": {
+              "filename": {
+                "type": "string"
+              },
+              "mime_code": {
+                "type": "string",
+                "examples": ["application/pdf", "image/png"]
+              },
+              "binary_data": {
+                "type": "string",
+                "description": "Base64-encoded binary data"
+              },
+              "uri": {
+                "type": "string",
+                "description": "External URI reference"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delivery_information": {
+      "type": "object",
+      "description": "Delivery/shipping information",
+      "properties": {
+        "delivery_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Actual delivery date"
+        },
+        "delivery_location": {
+          "$ref": "#/definitions/address"
+        },
+        "delivery_party": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "address": {
+              "$ref": "#/definitions/address"
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata (not part of XRechnung standard)",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Record creation timestamp"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Record last update timestamp"
+        },
+        "created_by": {
+          "type": "string",
+          "description": "User who created the invoice"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "sent", "paid", "overdue", "cancelled"],
+          "description": "Invoice workflow status"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Custom tags for categorization"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "address": {
+      "type": "object",
+      "required": ["city", "country_code"],
+      "properties": {
+        "line1": {
+          "type": "string",
+          "description": "Address line 1 (street, building)",
+          "maxLength": 200,
+          "examples": ["Geschäftsstraße 42"]
+        },
+        "line2": {
+          "type": "string",
+          "description": "Address line 2 (additional info)",
+          "maxLength": 200
+        },
+        "line3": {
+          "type": "string",
+          "description": "Address line 3 (additional info)",
+          "maxLength": 200
+        },
+        "postal_code": {
+          "type": "string",
+          "description": "Postal/ZIP code",
+          "maxLength": 20,
+          "examples": ["54321", "12345"]
+        },
+        "city": {
+          "type": "string",
+          "description": "City name",
+          "minLength": 1,
+          "maxLength": 100,
+          "examples": ["Ihre Stadt", "München"]
+        },
+        "state": {
+          "type": "string",
+          "description": "State/province/region",
+          "maxLength": 100
+        },
+        "country_code": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code",
+          "pattern": "^[A-Z]{2}$",
+          "examples": ["DE", "AT", "CH", "US", "GB"]
+        }
+      }
+    },
+    "allowance_charge": {
+      "type": "object",
+      "required": ["is_charge", "amount"],
+      "properties": {
+        "is_charge": {
+          "type": "boolean",
+          "description": "true=charge (addition), false=allowance (discount)"
+        },
+        "sequence_number": {
+          "type": "integer",
+          "description": "Sequence number for multiple allowances/charges"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Allowance/charge amount",
+          "minimum": 0,
+          "exclusiveMinimum": true
+        },
+        "base_amount": {
+          "type": "number",
+          "description": "Base amount to which percentage applies"
+        },
+        "percentage": {
+          "type": "number",
+          "description": "Percentage (if applicable)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for allowance/charge",
+          "examples": ["Discount", "Shipping", "Special agreement"]
+        },
+        "reason_code": {
+          "type": "string",
+          "description": "Coded reason (41=Bonus, 42=Discount, 60=Manufacturer's discount, 95=Freight, etc.)",
+          "examples": ["41", "42", "60", "95"]
+        },
+        "tax": {
+          "type": "object",
+          "description": "Tax information for this allowance/charge",
+          "properties": {
+            "category_code": {
+              "type": "string",
+              "enum": ["S", "E", "Z", "AE", "K", "G", "O", "L", "M"]
+            },
+            "rate_percent": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        }
+      }
+    }
+  }
+}
