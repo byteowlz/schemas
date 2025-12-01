@@ -1,0 +1,298 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://reqx.io/schemas/requirement.json",
+  "title": "Requirement",
+  "description": "Schema for validating reqx requirement TOML files",
+  "type": "object",
+  "required": ["title", "description"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "URL or path to the JSON schema for this document. Used by editors and validators for schema association.",
+      "format": "uri-reference",
+      "examples": [
+        "https://reqx.io/schemas/requirement.json",
+        "../schemas/requirement.json"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the requirement. Convention: REQ-XXX where XXX is a number.",
+      "pattern": "^[A-Z]+-[0-9]+$",
+      "examples": ["REQ-001", "REQ-042", "SYS-001"]
+    },
+    "title": {
+      "type": "string",
+      "description": "Brief title of the requirement",
+      "minLength": 3,
+      "maxLength": 200,
+      "examples": [
+        "User Authentication",
+        "Database Connection Pooling",
+        "Real-time Notifications"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the requirement. Should clearly state what the system shall do.",
+      "minLength": 10,
+      "examples": [
+        "The system shall provide secure user authentication using industry-standard practices."
+      ]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current lifecycle status of the requirement",
+      "enum": [
+        "draft",
+        "review",
+        "approved",
+        "implemented",
+        "verified",
+        "deprecated"
+      ],
+      "default": "draft"
+    },
+    "priority": {
+      "type": "string",
+      "description": "Priority level indicating importance and urgency",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "category": {
+      "type": "array",
+      "description": "Categories this requirement belongs to for organizational purposes",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "uniqueItems": true,
+      "examples": [
+        ["security", "user-management"],
+        ["performance", "backend"],
+        ["ui", "ux", "frontend"]
+      ]
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Array of requirement IDs that this requirement depends on. Must reference valid requirement IDs.",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]+-[0-9]+$"
+      },
+      "uniqueItems": true,
+      "examples": [
+        ["REQ-001", "REQ-002"],
+        []
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Free-form tags for searching, filtering, and grouping requirements",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "uniqueItems": true,
+      "examples": [
+        ["authentication", "security", "core"],
+        ["api", "rest", "v2"]
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional custom fields for project-specific data",
+      "additionalProperties": true,
+      "examples": [
+        {
+          "estimated_effort": "2 weeks",
+          "assigned_to": "security-team",
+          "sprint": "2024-Q1-S3"
+        }
+      ]
+    },
+    "version": {
+      "type": "string",
+      "description": "Version number for requirement versioning",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "examples": ["1.0.0", "2.1.0"]
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Explanation of why this requirement exists and its business justification",
+      "minLength": 10,
+      "examples": [
+        "Users need to securely access their data without risk of unauthorized access."
+      ]
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "List of criteria that must be met for the requirement to be considered complete",
+      "items": {
+        "type": "string",
+        "minLength": 5
+      },
+      "examples": [
+        [
+          "User can log in with username and password",
+          "Failed login attempts are rate-limited",
+          "Sessions expire after 24 hours of inactivity"
+        ]
+      ]
+    },
+    "verification_methods": {
+      "type": "array",
+      "description": "Methods used to verify the requirement has been correctly implemented",
+      "items": {
+        "type": "string",
+        "enum": [
+          "test",
+          "inspection",
+          "demonstration",
+          "analysis"
+        ]
+      },
+      "uniqueItems": true,
+      "examples": [
+        ["test", "inspection"],
+        ["demonstration"]
+      ]
+    },
+    "risks": {
+      "type": "array",
+      "description": "Potential risks associated with implementing or not implementing this requirement",
+      "items": {
+        "type": "object",
+        "required": ["description", "severity"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 10
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "mitigation": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "stakeholders": {
+      "type": "array",
+      "description": "Individuals or teams who have an interest in this requirement",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "examples": [
+        ["security-team", "product-owner", "end-users"]
+      ]
+    },
+    "source": {
+      "type": "string",
+      "description": "Origin or source of the requirement (e.g., customer request, regulatory requirement)",
+      "examples": [
+        "Customer Feature Request #1234",
+        "GDPR Compliance",
+        "Security Audit Finding"
+      ]
+    },
+    "links": {
+      "type": "object",
+      "description": "External links related to this requirement",
+      "properties": {
+        "design_doc": {
+          "type": "string",
+          "format": "uri"
+        },
+        "ticket": {
+          "type": "string",
+          "format": "uri"
+        },
+        "spec": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "revision_history": {
+      "type": "array",
+      "description": "History of changes to this requirement",
+      "items": {
+        "type": "object",
+        "required": ["date", "description"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "author": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 5
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "REQ-001",
+      "title": "User Authentication",
+      "description": "The system shall provide secure user authentication using industry-standard practices. This includes password hashing, session management, and optional two-factor authentication.",
+      "status": "approved",
+      "priority": "critical",
+      "category": ["security", "user-management"],
+      "dependencies": [],
+      "tags": ["authentication", "security", "core"],
+      "metadata": {
+        "estimated_effort": "2 weeks",
+        "assigned_to": "security-team"
+      }
+    },
+    {
+      "id": "SYS-042",
+      "title": "Database Connection Pooling",
+      "description": "The system shall implement connection pooling for database connections to improve performance and resource utilization.",
+      "status": "implemented",
+      "priority": "high",
+      "category": ["performance", "backend"],
+      "dependencies": ["SYS-001"],
+      "tags": ["database", "optimization", "backend"],
+      "version": "1.0.0",
+      "rationale": "Without connection pooling, the application creates excessive database connections, leading to resource exhaustion under load.",
+      "acceptance_criteria": [
+        "Connection pool maintains minimum of 5 connections",
+        "Maximum pool size is configurable",
+        "Idle connections are recycled after 30 seconds"
+      ],
+      "verification_methods": ["test", "inspection"],
+      "stakeholders": ["backend-team", "devops"],
+      "metadata": {
+        "estimated_effort": "1 week",
+        "assigned_to": "backend-team",
+        "sprint": "2024-Q1-S2"
+      }
+    }
+  ]
+}
