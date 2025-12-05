@@ -3,6 +3,7 @@
   "title": "omni config",
   "type": "object",
   "properties": {
+    "$schema": { "type": "string" },
     "openai_base_url": { "type": "string" },
     "openai_model": { "type": "string" },
     "application_search_paths": {
