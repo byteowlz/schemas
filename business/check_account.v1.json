@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Check Account",
+  "description": "Bank/checking account schema aligned with sevdesk CheckAccount",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Account name/label"
+    },
+    "iban": {
+      "type": "string",
+      "description": "IBAN"
+    },
+    "bic": {
+      "type": "string",
+      "description": "BIC/SWIFT"
+    },
+    "account_number": {
+      "type": "string",
+      "description": "Legacy account number"
+    },
+    "bank_code": {
+      "type": "string",
+      "description": "Legacy bank code/BLZ"
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR"
+    },
+    "is_default": {
+      "type": "boolean",
+      "description": "Whether this is the default account",
+      "default": false
+    },
+    "sev_client_id": {
+      "type": "integer",
+      "description": "Owning sevdesk client ID"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/check_account.v1.json",
+  "schema_version": "1.0.0"
+}

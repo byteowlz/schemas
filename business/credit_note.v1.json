@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Credit Note",
+  "description": "Credit note schema aligned with sevdesk CreditNote",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "credit_note_number": {
+      "type": "string",
+      "description": "Credit note number",
+      "minLength": 1
+    },
+    "contact_id": {
+      "type": "integer",
+      "description": "Customer contact ID"
+    },
+    "contact_person_id": {
+      "type": "integer",
+      "description": "User/contact person ID"
+    },
+    "related_invoice_id": {
+      "type": "integer",
+      "description": "Invoice ID this credit note refers to"
+    },
+    "status": {
+      "type": "string",
+      "description": "Status codes: 50=Draft, 100=Open, 200=Booked, 750=Cancelled, 1000=Archived"
+    },
+    "delivery_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Delivery date from the original invoice"
+    },
+    "delivery_date_until": {
+      "type": "string",
+      "format": "date",
+      "description": "Delivery end date from the original invoice"
+    },
+    "credit_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of credit note"
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR"
+    },
+    "tax_rule": {
+      "type": "string",
+      "description": "Sevdesk tax rule ID (sevdesk 2.0)"
+    },
+    "tax_type": {
+      "type": "string",
+      "description": "Sevdesk tax type (sevdesk 1.0)",
+      "enum": [
+        "default",
+        "eu",
+        "noteu",
+        "custom",
+        "ss"
+      ]
+    },
+    "tax_set": {
+      "type": "string",
+      "description": "Custom tax set ID (sevdesk 1.0 custom tax)"
+    },
+    "payment_method_id": {
+      "type": "integer",
+      "description": "Payment method reference"
+    },
+    "sum_net": {
+      "type": "number",
+      "description": "Net sum",
+      "minimum": 0
+    },
+    "sum_tax": {
+      "type": "number",
+      "description": "Tax sum",
+      "minimum": 0
+    },
+    "sum_gross": {
+      "type": "number",
+      "description": "Gross sum",
+      "minimum": 0
+    },
+    "payment_difference": {
+      "type": "string",
+      "description": "Payment difference reason/type"
+    },
+    "enshrined": {
+      "type": "boolean",
+      "description": "Whether the credit note is enshrined/locked"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "credit_note_number",
+    "contact_id"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/credit_note.v1.json",
+  "schema_version": "1.0.0"
+}

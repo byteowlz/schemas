@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Communication Way",
+  "description": "Contact communication method (email, phone, web, etc.), aligned with sevdesk CommunicationWay",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "contact_id": {
+      "type": "integer",
+      "description": "ID of the contact/party this communication way belongs to"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "EMAIL",
+        "PHONE",
+        "WEB",
+        "MOBILE",
+        "FAX",
+        "OTHER"
+      ],
+      "description": "Type of communication channel"
+    },
+    "value": {
+      "type": "string",
+      "description": "Channel value (email address, phone number, URL, etc.)"
+    },
+    "key": {
+      "type": "string",
+      "description": "Category/key for the channel (e.g., work, personal, billing)"
+    },
+    "primary": {
+      "type": "boolean",
+      "description": "Whether this is the primary communication channel",
+      "default": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "contact_id",
+    "type",
+    "value"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/communication_way.v1.json",
+  "schema_version": "1.0.0"
+}

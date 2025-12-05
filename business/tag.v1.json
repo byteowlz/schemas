@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tag",
+  "description": "Tag label aligned with sevdesk Tag",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Tag name",
+      "minLength": 1
+    },
+    "color": {
+      "type": "string",
+      "description": "Color code (optional)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/tag.v1.json",
+  "schema_version": "1.0.0"
+}

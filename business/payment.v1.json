@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Payment",
+  "description": "Schema for payment records in the based business management system",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "invoice_id": {
+      "type": "integer",
+      "description": "ID of the invoice this payment is for"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when payment was received"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Payment amount",
+      "minimum": 0
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency code (ISO 4217)",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR"
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "bank_transfer",
+        "cash",
+        "card",
+        "paypal",
+        "other"
+      ],
+      "description": "Payment method"
+    },
+    "reference": {
+      "type": "string",
+      "description": "Payment reference number (transaction ID, check number, etc.)"
+    },
+    "check_account_id": {
+      "type": "integer",
+      "description": "Linked bank/check account ID"
+    },
+    "check_account_transaction_id": {
+      "type": "integer",
+      "description": "Linked bank transaction ID"
+    },
+    "value_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Booking/value date"
+    },
+    "status": {
+      "type": "string",
+      "description": "Payment status (aligned to sevdesk transaction states)"
+    },
+    "payer_name": {
+      "type": "string",
+      "description": "Name of the payer"
+    },
+    "payer_account": {
+      "type": "string",
+      "description": "Payer IBAN/account number"
+    },
+    "payer_bic": {
+      "type": "string",
+      "description": "Payer BIC/bank code"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "Payment purpose/usage text"
+    }
+  },
+  "required": [
+    "invoice_id",
+    "paid_at",
+    "amount",
+    "method"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/payment.v1.json",
+  "schema_version": "1.0.0"
+}

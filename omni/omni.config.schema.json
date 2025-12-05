@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "omni config",
+  "type": "object",
+  "properties": {
+    "openai_base_url": { "type": "string" },
+    "openai_model": { "type": "string" },
+    "application_search_paths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "toggle_shortcut": {
+      "$ref": "#/definitions/shortcut"
+    },
+    "clipboard_shortcut": {
+      "$ref": "#/definitions/shortcut"
+    },
+    "audio_storage_path": { "type": "string" },
+    "shell": { "type": "string" },
+    "shell_args": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "scripts": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "properties": {
+              "cmd": { "type": "string" },
+              "alias": {
+                "oneOf": [
+                  { "type": "string" },
+                  {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                ]
+              }
+            },
+            "required": ["cmd"],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "shortcut": {
+      "type": "object",
+      "properties": {
+        "modifiers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "key": { "type": "string" }
+      },
+      "required": ["modifiers", "key"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

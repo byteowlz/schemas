@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Order",
+  "description": "Order/quote schema aligned with sevdesk Order, supports partial/final invoice creation",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "order_number": {
+      "type": "string",
+      "description": "Order or quote number",
+      "minLength": 1
+    },
+    "order_type": {
+      "type": "string",
+      "description": "Document type (e.g., normal order, quote, contract note, packing list)",
+      "enum": [
+        "ORDER",
+        "QUOTE",
+        "CONTRACT_NOTE",
+        "PACKING_LIST"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "description": "Order status (sevdesk codes: 50=Draft, 100=Open, 200=Accepted, 300=Partial, 400=Finalized, 750=Cancelled, 1000=Archived)"
+    },
+    "contact_id": {
+      "type": "integer",
+      "description": "Customer contact ID"
+    },
+    "contact_person_id": {
+      "type": "integer",
+      "description": "User/contact person ID"
+    },
+    "address_block": {
+      "type": "string",
+      "description": "Rendered address block used on the document"
+    },
+    "address_country": {
+      "type": "string",
+      "description": "Country or ISO code of the address block"
+    },
+    "order_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Order/quote date"
+    },
+    "delivery_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Delivery/start date"
+    },
+    "delivery_date_until": {
+      "type": "string",
+      "format": "date",
+      "description": "Delivery end date for ranges"
+    },
+    "time_to_pay": {
+      "type": "integer",
+      "description": "Payment goal in days"
+    },
+    "discount_pct": {
+      "type": "number",
+      "description": "Order-level discount percentage",
+      "minimum": 0
+    },
+    "header": {
+      "type": "string",
+      "description": "Document header text"
+    },
+    "head_text": {
+      "type": "string",
+      "description": "Top text block (HTML allowed in sevdesk)"
+    },
+    "foot_text": {
+      "type": "string",
+      "description": "Footer text block (HTML allowed in sevdesk)"
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR"
+    },
+    "tax_rule": {
+      "type": "string",
+      "description": "Sevdesk tax rule ID (sevdesk 2.0)"
+    },
+    "tax_type": {
+      "type": "string",
+      "description": "Sevdesk tax type (sevdesk 1.0)",
+      "enum": [
+        "default",
+        "eu",
+        "noteu",
+        "custom",
+        "ss"
+      ]
+    },
+    "tax_set": {
+      "type": "string",
+      "description": "Custom tax set ID (sevdesk 1.0 custom tax)"
+    },
+    "small_settlement": {
+      "type": "boolean",
+      "description": "Indicates small settlement scheme (no VAT)"
+    },
+    "payment_method_id": {
+      "type": "integer",
+      "description": "Payment method reference"
+    },
+    "sum_net": {
+      "type": "number",
+      "description": "Net sum",
+      "minimum": 0
+    },
+    "sum_tax": {
+      "type": "number",
+      "description": "Tax sum",
+      "minimum": 0
+    },
+    "sum_gross": {
+      "type": "number",
+      "description": "Gross sum",
+      "minimum": 0
+    },
+    "enshrined": {
+      "type": "boolean",
+      "description": "Whether the order is enshrined/locked"
+    },
+    "recurrence_interval": {
+      "type": "string",
+      "description": "ISO-8601 duration for recurring orders/invoices"
+    },
+    "next_occurrence_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of next scheduled recurrence"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "order_number",
+    "contact_id"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/order.v1.json",
+  "schema_version": "1.0.0"
+}

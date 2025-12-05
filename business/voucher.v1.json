@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Voucher",
+  "description": "Expense voucher schema aligned with sevdesk Voucher",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "voucher_number": {
+      "type": "string",
+      "description": "Voucher number/reference",
+      "minLength": 1
+    },
+    "vendor_contact_id": {
+      "type": "integer",
+      "description": "Vendor contact ID"
+    },
+    "status": {
+      "type": "string",
+      "description": "Status codes: 50=Draft, 100=Unpaid/Due, 200=Paid, 750=Cancelled, 1000=Archived"
+    },
+    "voucher_type": {
+      "type": "string",
+      "description": "Voucher category/type (invoice, receipt, etc.)"
+    },
+    "delivery_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Service/receipt date"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Payment due date"
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR"
+    },
+    "tax_rule": {
+      "type": "string",
+      "description": "Sevdesk tax rule ID (sevdesk 2.0)"
+    },
+    "tax_type": {
+      "type": "string",
+      "description": "Sevdesk tax type (sevdesk 1.0)",
+      "enum": [
+        "default",
+        "eu",
+        "noteu",
+        "custom",
+        "ss"
+      ]
+    },
+    "tax_set": {
+      "type": "string",
+      "description": "Custom tax set ID (sevdesk 1.0 custom tax)"
+    },
+    "accounting_type": {
+      "type": "string",
+      "description": "Legacy accounting type/SKR number"
+    },
+    "account_datev": {
+      "type": "string",
+      "description": "Booking account (Datev mapping) for sevdesk 2.0"
+    },
+    "payment_method_id": {
+      "type": "integer",
+      "description": "Payment method reference"
+    },
+    "check_account_id": {
+      "type": "integer",
+      "description": "Bank account used for payment"
+    },
+    "sum_net": {
+      "type": "number",
+      "description": "Net sum",
+      "minimum": 0
+    },
+    "sum_tax": {
+      "type": "number",
+      "description": "Tax sum",
+      "minimum": 0
+    },
+    "sum_gross": {
+      "type": "number",
+      "description": "Gross sum",
+      "minimum": 0
+    },
+    "cash_discount": {
+      "type": "number",
+      "description": "Cash discount amount",
+      "minimum": 0
+    },
+    "payment_difference": {
+      "type": "string",
+      "description": "Payment difference reason/type"
+    },
+    "enshrined": {
+      "type": "boolean",
+      "description": "Whether the voucher is enshrined/locked"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "voucher_number",
+    "vendor_contact_id"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/voucher.v1.json",
+  "schema_version": "1.0.0"
+}

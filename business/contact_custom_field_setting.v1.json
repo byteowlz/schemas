@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Contact Custom Field Setting",
+  "description": "Definition of a custom field for contacts, aligned with sevdesk ContactCustomFieldSetting",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name of the custom field",
+      "minLength": 1
+    },
+    "field_type": {
+      "type": "string",
+      "description": "Field type (text, number, date, select, checkbox, etc.)"
+    },
+    "required": {
+      "type": "boolean",
+      "description": "Whether the field is mandatory",
+      "default": false
+    },
+    "options": {
+      "type": "array",
+      "description": "Options for select-type fields",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reference_count": {
+      "type": "integer",
+      "description": "Number of contacts referencing this field"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "name",
+    "field_type"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/contact_custom_field_setting.v1.json",
+  "schema_version": "1.0.0"
+}

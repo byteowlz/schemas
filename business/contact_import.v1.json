@@ -32,7 +32,9 @@
           "description": "Name suffix (e.g., Jr., III, PhD)"
         }
       },
-      "required": ["full_name"]
+      "required": [
+        "full_name"
+      ]
     },
     "job_title": {
       "type": "string",
@@ -68,7 +70,11 @@
           },
           "type": {
             "type": "string",
-            "enum": ["work", "personal", "other"],
+            "enum": [
+              "work",
+              "personal",
+              "other"
+            ],
             "description": "Email type"
           },
           "primary": {
@@ -77,7 +83,9 @@
             "default": false
           }
         },
-        "required": ["email"]
+        "required": [
+          "email"
+        ]
       }
     },
     "phone_numbers": {
@@ -92,7 +100,13 @@
           },
           "type": {
             "type": "string",
-            "enum": ["work", "mobile", "home", "fax", "other"],
+            "enum": [
+              "work",
+              "mobile",
+              "home",
+              "fax",
+              "other"
+            ],
             "description": "Phone type"
           },
           "extension": {
@@ -105,7 +119,9 @@
             "default": false
           }
         },
-        "required": ["number"]
+        "required": [
+          "number"
+        ]
       }
     },
     "addresses": {
@@ -116,7 +132,12 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["work", "home", "mailing", "other"],
+            "enum": [
+              "work",
+              "home",
+              "mailing",
+              "other"
+            ],
             "description": "Address type"
           },
           "street": {
@@ -158,11 +179,19 @@
           },
           "type": {
             "type": "string",
-            "enum": ["company", "personal", "portfolio", "blog", "other"],
+            "enum": [
+              "company",
+              "personal",
+              "portfolio",
+              "blog",
+              "other"
+            ],
             "description": "Website type"
           }
         },
-        "required": ["url"]
+        "required": [
+          "url"
+        ]
       }
     },
     "social_media": {
@@ -195,5 +224,9 @@
       "description": "Additional notes or context about this contact"
     }
   },
-  "required": ["name"]
+  "required": [
+    "name"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/contact_import.v1.json",
+  "schema_version": "1.0.0"
 }

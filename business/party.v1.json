@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Party",
+  "description": "Schema for a party entity (person or organization) in the based business management system",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier (database-assigned)"
+    },
+    "party_type": {
+      "type": "string",
+      "enum": [
+        "person",
+        "organization"
+      ],
+      "description": "Type of party"
+    },
+    "legal_name": {
+      "type": "string",
+      "description": "Legal name of the person or organization",
+      "minLength": 1
+    },
+    "customer_number": {
+      "type": "string",
+      "description": "Customer/vendor number used in accounting/CRM"
+    },
+    "status": {
+      "type": "integer",
+      "description": "Status code (sevdesk: 100=Lead, 500=Pending, 1000=Active)"
+    },
+    "category_id": {
+      "type": "integer",
+      "description": "Category identifier for the party"
+    },
+    "parent_id": {
+      "type": "integer",
+      "description": "Parent organization contact ID"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Display name (optional, for shorter/preferred names)"
+    },
+    "is_client": {
+      "type": "boolean",
+      "description": "Whether this party is a client",
+      "default": false
+    },
+    "is_vendor": {
+      "type": "boolean",
+      "description": "Whether this party is a vendor",
+      "default": false
+    },
+    "tax_id": {
+      "type": "string",
+      "description": "Tax identification number (VAT, EIN, etc.)"
+    },
+    "vat_number": {
+      "type": "string",
+      "description": "VAT identification number (sevdesk vatNumber)"
+    },
+    "tax_number": {
+      "type": "string",
+      "description": "National tax number (sevdesk taxNumber)"
+    },
+    "payment_terms_days": {
+      "type": "integer",
+      "description": "Default payment goal in days"
+    },
+    "default_discount_amount": {
+      "type": "number",
+      "description": "Default discount amount applied to documents"
+    },
+    "default_discount_percentage": {
+      "type": "boolean",
+      "description": "If true, default discount is a percentage instead of absolute"
+    },
+    "buyer_reference": {
+      "type": "string",
+      "description": "Buyer reference/Leitweg-ID for public sector customers"
+    },
+    "bank_account": {
+      "type": "string",
+      "description": "Bank account number (IBAN)"
+    },
+    "bank_number": {
+      "type": "string",
+      "description": "Bank code/BIC"
+    },
+    "government_agency": {
+      "type": "boolean",
+      "description": "Whether the contact is a government agency",
+      "default": false
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "party_type",
+    "legal_name"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/party.v1.json",
+  "schema_version": "1.0.0"
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Order Line Item",
+  "description": "Line item for orders/quotes, aligned with sevdesk OrderPos",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "order_id": {
+      "type": "integer",
+      "description": "ID of the parent order"
+    },
+    "line_no": {
+      "type": "integer",
+      "description": "Line position number"
+    },
+    "part_id": {
+      "type": "integer",
+      "description": "Linked product/part ID"
+    },
+    "description": {
+      "type": "string",
+      "description": "Line description"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Quantity",
+      "minimum": 0
+    },
+    "unity": {
+      "type": "string",
+      "description": "Unit of measure code or label"
+    },
+    "unit_price_net": {
+      "type": "number",
+      "description": "Unit price excluding tax",
+      "minimum": 0
+    },
+    "unit_price_gross": {
+      "type": "number",
+      "description": "Unit price including tax",
+      "minimum": 0
+    },
+    "discount_pct": {
+      "type": "number",
+      "description": "Discount percentage",
+      "minimum": 0
+    },
+    "tax_rate_pct": {
+      "type": "number",
+      "description": "Tax rate percentage",
+      "minimum": 0
+    },
+    "total_net": {
+      "type": "number",
+      "description": "Line total excluding tax",
+      "minimum": 0
+    },
+    "total_gross": {
+      "type": "number",
+      "description": "Line total including tax",
+      "minimum": 0
+    },
+    "booking_account": {
+      "type": "string",
+      "description": "Accounting/booking account reference"
+    },
+    "partial_type": {
+      "type": "string",
+      "enum": [
+        "ADVANCE",
+        "PARTIAL",
+        "FINAL"
+      ],
+      "description": "Partial/final invoice marker when converting to invoices"
+    }
+  },
+  "required": [
+    "order_id",
+    "description"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/order_line.v1.json",
+  "schema_version": "1.0.0"
+}

@@ -1,0 +1,221 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Business Document",
+  "description": "Schema for business documents (invoices, quotes, purchase orders, credit notes) in the based system",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "doc_type": {
+      "type": "string",
+      "enum": [
+        "quote",
+        "invoice",
+        "credit",
+        "po"
+      ],
+      "description": "Document type"
+    },
+    "number": {
+      "type": "string",
+      "description": "Document number (e.g., INV-2024-001)",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "issued",
+        "sent",
+        "paid",
+        "void"
+      ],
+      "description": "Document status"
+    },
+    "status_code": {
+      "type": "string",
+      "description": "Sevdesk status code (50 draft, 100 open, 200 booked/paid, 750 cancelled, 1000 archived)"
+    },
+    "invoice_type": {
+      "type": "string",
+      "description": "Sevdesk invoice type code (RE, WKR, SR, MA, TR, AR, ER)"
+    },
+    "order_type": {
+      "type": "string",
+      "description": "Sevdesk order type when used for orders/quotes"
+    },
+    "party_id": {
+      "type": "integer",
+      "description": "ID of the party (client/vendor) this document is for"
+    },
+    "contact_person_id": {
+      "type": "integer",
+      "description": "User/contact person ID"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the document was issued"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Payment due date (for invoices)"
+    },
+    "delivery_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Delivery/fulfillment date"
+    },
+    "delivery_date_until": {
+      "type": "string",
+      "format": "date",
+      "description": "End of delivery range"
+    },
+    "address_block": {
+      "type": "string",
+      "description": "Rendered address block used on the document"
+    },
+    "address_country": {
+      "type": "string",
+      "description": "Country or ISO code of the address block"
+    },
+    "time_to_pay": {
+      "type": "integer",
+      "description": "Payment goal in days"
+    },
+    "payment_method_id": {
+      "type": "integer",
+      "description": "Payment method reference"
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency code (ISO 4217)",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR"
+    },
+    "tax_rule": {
+      "type": "string",
+      "description": "Sevdesk tax rule ID (sevdesk 2.0)"
+    },
+    "tax_type": {
+      "type": "string",
+      "description": "Sevdesk tax type (sevdesk 1.0)",
+      "enum": [
+        "default",
+        "eu",
+        "noteu",
+        "custom",
+        "ss"
+      ]
+    },
+    "tax_set": {
+      "type": "string",
+      "description": "Custom tax set ID (sevdesk 1.0 custom tax)"
+    },
+    "tax_included": {
+      "type": "boolean",
+      "description": "Whether prices include tax",
+      "default": false
+    },
+    "small_settlement": {
+      "type": "boolean",
+      "description": "Indicates small settlement scheme (no VAT)"
+    },
+    "discount_pct": {
+      "type": "number",
+      "description": "Document-level discount percentage",
+      "minimum": 0
+    },
+    "dunning_level": {
+      "type": "integer",
+      "description": "Number of reminders sent"
+    },
+    "header": {
+      "type": "string",
+      "description": "Document header text"
+    },
+    "head_text": {
+      "type": "string",
+      "description": "Top text block (HTML allowed in sevdesk)"
+    },
+    "foot_text": {
+      "type": "string",
+      "description": "Footer text block (HTML allowed in sevdesk)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "total_net": {
+      "type": "number",
+      "description": "Total amount excluding tax",
+      "minimum": 0
+    },
+    "total_tax": {
+      "type": "number",
+      "description": "Total tax amount",
+      "minimum": 0
+    },
+    "total_gross": {
+      "type": "number",
+      "description": "Total amount including tax",
+      "minimum": 0
+    },
+    "sum_net_foreign_currency": {
+      "type": "number",
+      "description": "Net total in foreign currency",
+      "minimum": 0
+    },
+    "sum_tax_foreign_currency": {
+      "type": "number",
+      "description": "Tax total in foreign currency",
+      "minimum": 0
+    },
+    "sum_gross_foreign_currency": {
+      "type": "number",
+      "description": "Gross total in foreign currency",
+      "minimum": 0
+    },
+    "enshrined": {
+      "type": "boolean",
+      "description": "Whether the document is enshrined/locked"
+    },
+    "map_all": {
+      "type": "boolean",
+      "description": "Sevdesk flag to auto-map positions",
+      "default": false
+    },
+    "recurrence_interval": {
+      "type": "string",
+      "description": "ISO-8601 duration for recurring documents"
+    },
+    "next_occurrence_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of next scheduled recurrence"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "doc_type",
+    "number",
+    "status",
+    "party_id",
+    "issue_date",
+    "currency"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/document.v1.json",
+  "schema_version": "1.0.0"
+}

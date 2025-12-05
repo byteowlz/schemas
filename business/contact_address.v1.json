@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Contact Address",
+  "description": "Address for a contact/party, aligned with sevdesk ContactAddress and based address entity",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "contact_id": {
+      "type": "integer",
+      "description": "ID of the contact/party this address belongs to"
+    },
+    "address_type": {
+      "type": "string",
+      "description": "Address category/type (billing, shipping, home, work, etc.)"
+    },
+    "street": {
+      "type": "string",
+      "description": "Street name and number"
+    },
+    "line2": {
+      "type": "string",
+      "description": "Additional address line"
+    },
+    "postal_code": {
+      "type": "string",
+      "description": "Postal/ZIP code"
+    },
+    "city": {
+      "type": "string",
+      "description": "City"
+    },
+    "region": {
+      "type": "string",
+      "description": "State/region"
+    },
+    "country": {
+      "type": "string",
+      "description": "Country or ISO country code"
+    },
+    "primary": {
+      "type": "boolean",
+      "description": "Whether this is the primary address",
+      "default": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "contact_id",
+    "country"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/contact_address.v1.json",
+  "schema_version": "1.0.0"
+}

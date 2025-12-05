@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Contact Custom Field",
+  "description": "Value of a custom field for a contact, aligned with sevdesk ContactCustomField",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "contact_id": {
+      "type": "integer",
+      "description": "Contact/party ID"
+    },
+    "setting_id": {
+      "type": "integer",
+      "description": "Custom field setting ID"
+    },
+    "value": {
+      "type": "string",
+      "description": "Value stored for the field"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "contact_id",
+    "setting_id",
+    "value"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/contact_custom_field.v1.json",
+  "schema_version": "1.0.0"
+}

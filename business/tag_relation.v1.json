@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tag Relation",
+  "description": "Links tags to entities, aligned with sevdesk TagRelation",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "tag_id": {
+      "type": "integer",
+      "description": "Tag ID"
+    },
+    "object_type": {
+      "type": "string",
+      "description": "Name of the tagged model (e.g., Contact, Invoice, Voucher)"
+    },
+    "object_id": {
+      "type": "integer",
+      "description": "ID of the tagged entity"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    }
+  },
+  "required": [
+    "tag_id",
+    "object_type",
+    "object_id"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/tag_relation.v1.json",
+  "schema_version": "1.0.0"
+}

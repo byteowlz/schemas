@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Check Account Transaction",
+  "description": "Bank transaction aligned with sevdesk CheckAccountTransaction",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier"
+    },
+    "check_account_id": {
+      "type": "integer",
+      "description": "Check account ID"
+    },
+    "value_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Booking date"
+    },
+    "entry_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Import date"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Transaction amount (positive=credit, negative=debit)"
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code",
+      "pattern": "^[A-Z]{3}$",
+      "default": "EUR"
+    },
+    "status": {
+      "type": "string",
+      "description": "Status: 100=Created, 200=Linked, 300=Private, 400=Booked"
+    },
+    "paymt_purpose": {
+      "type": "string",
+      "description": "Payment purpose/reference text"
+    },
+    "payee_payer_name": {
+      "type": "string",
+      "description": "Other party name"
+    },
+    "payee_payer_account": {
+      "type": "string",
+      "description": "Other party IBAN/account number"
+    },
+    "payee_payer_bank_code": {
+      "type": "string",
+      "description": "Other party BIC/bank code"
+    },
+    "source_transaction_id": {
+      "type": "integer",
+      "description": "Source transaction for rebooking"
+    },
+    "target_transaction_id": {
+      "type": "integer",
+      "description": "Target transaction for rebooking"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "check_account_id",
+    "value_date",
+    "amount",
+    "status"
+  ],
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/business/check_account_transaction.v1.json",
+  "schema_version": "1.0.0"
+}
