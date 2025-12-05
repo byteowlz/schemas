@@ -16,11 +16,30 @@
     "clipboard_shortcut": {
       "$ref": "#/definitions/shortcut"
     },
+    "terminal_shortcut": {
+      "$ref": "#/definitions/shortcut"
+    },
     "audio_storage_path": { "type": "string" },
     "shell": { "type": "string" },
     "shell_args": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "terminal": {
+      "type": "object",
+      "properties": {
+        "font": { "type": "string" },
+        "font_size": { "type": "number" },
+        "theme": {
+          "type": "object",
+          "properties": {
+            "background": { "type": "string" },
+            "foreground": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     },
     "scripts": {
       "type": "object",
