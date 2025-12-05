@@ -41,6 +41,53 @@
       },
       "additionalProperties": false
     },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "system": { "type": "string" },
+        "scheme": { "type": "string" },
+        "palette": {
+          "type": "object",
+          "properties": {
+            "base00": { "type": "string" },
+            "base01": { "type": "string" },
+            "base02": { "type": "string" },
+            "base03": { "type": "string" },
+            "base04": { "type": "string" },
+            "base05": { "type": "string" },
+            "base06": { "type": "string" },
+            "base07": { "type": "string" },
+            "base08": { "type": "string" },
+            "base09": { "type": "string" },
+            "base0A": { "type": "string" },
+            "base0B": { "type": "string" },
+            "base0C": { "type": "string" },
+            "base0D": { "type": "string" },
+            "base0E": { "type": "string" },
+            "base0F": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "semantic": {
+          "type": "object",
+          "properties": {
+            "background": { "type": "string" },
+            "foreground": { "type": "string" },
+            "primary": { "type": "string" },
+            "secondary": { "type": "string" },
+            "accent": { "type": "string" },
+            "muted": { "type": "string" },
+            "border": { "type": "string" },
+            "success": { "type": "string" },
+            "warning": { "type": "string" },
+            "error": { "type": "string" },
+            "info": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "scripts": {
       "type": "object",
       "additionalProperties": {
