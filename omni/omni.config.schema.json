@@ -88,6 +88,13 @@
       },
       "additionalProperties": false
     },
+    "paths": {
+      "type": "object",
+      "properties": {
+        "themes_dir": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
     "scripts": {
       "type": "object",
       "additionalProperties": {
@@ -112,6 +119,10 @@
           }
         ]
       }
+    },
+    "default_panel": {
+      "type": "string",
+      "description": "Default plugin panel to show when omnibar is opened (e.g., 'opencode-status', 'none')"
     }
   },
   "definitions": {
