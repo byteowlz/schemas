@@ -130,6 +130,13 @@
       "additionalProperties": {
         "type": "string"
       }
+    },
+    "opencode_remote_hosts": {
+      "type": "array",
+      "description": "Remote hosts for the OpenCode plugin to query via SSH. Each entry can use an SSH alias or specify host/user/port.",
+      "items": {
+        "$ref": "#/definitions/opencode_remote_host"
+      }
     }
   },
   "definitions": {
@@ -143,6 +150,32 @@
         "key": { "type": "string" }
       },
       "required": ["modifiers", "key"],
+      "additionalProperties": false
+    },
+    "opencode_remote_host": {
+      "type": "object",
+      "description": "Configuration for a remote host that the OpenCode plugin can query via SSH",
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "SSH alias (from ~/.ssh/config) or hostname/IP address"
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional display name for the host (defaults to host if not provided)"
+        },
+        "user": {
+          "type": "string",
+          "description": "Optional SSH user (if not using an alias that already specifies it)"
+        },
+        "port": {
+          "type": "integer",
+          "description": "Optional SSH port (defaults to 22)",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "required": ["host"],
       "additionalProperties": false
     }
   },
