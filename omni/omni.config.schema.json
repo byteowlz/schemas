@@ -123,6 +123,13 @@
     "default_panel": {
       "type": "string",
       "description": "Default plugin panel to show when omnibar is opened (e.g., 'opencode-status', 'none')"
+    },
+    "plugin_commands": {
+      "type": "object",
+      "description": "Commands that plugins can execute. Key is the command name, value is the shell command.",
+      "additionalProperties": {
+        "type": "string"
+      }
     }
   },
   "definitions": {
