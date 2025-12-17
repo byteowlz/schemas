@@ -137,6 +137,13 @@
       "items": {
         "$ref": "#/definitions/opencode_remote_host"
       }
+    },
+    "plugin_triggers": {
+      "type": "object",
+      "description": "Plugin triggers - map keyword to plugin ID. Type the keyword in the omnibar to activate the plugin.",
+      "additionalProperties": {
+        "type": "string"
+      }
     }
   },
   "definitions": {
