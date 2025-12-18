@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tmpltr.dev/schemas/config.schema.json",
+  "title": "tmpltr Configuration",
+  "description": "Configuration schema for tmpltr - a Typst-based document template engine",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support"
+    },
+    "paths": {
+      "type": "object",
+      "description": "Path configuration for templates, schemas, brands, and cache directories",
+      "additionalProperties": false,
+      "properties": {
+        "templates_dir": {
+          "type": "string",
+          "description": "Directory containing templates. Supports ~ and environment variables like $XDG_DATA_HOME",
+          "default": "$XDG_DATA_HOME/tmpltr/templates",
+          "examples": ["~/templates", "$XDG_DATA_HOME/tmpltr/templates", "/opt/tmpltr/templates"]
+        },
+        "schemas_dir": {
+          "type": "string",
+          "description": "Directory containing JSON schemas for content validation. Supports ~ and environment variables",
+          "default": "$XDG_DATA_HOME/tmpltr/schemas",
+          "examples": ["~/schemas", "$XDG_DATA_HOME/tmpltr/schemas"]
+        },
+        "brands_dir": {
+          "type": "string",
+          "description": "Directory containing brand configurations (logos, fonts, colors). Supports ~ and environment variables",
+          "default": "$XDG_DATA_HOME/tmpltr/brands",
+          "examples": ["~/brands", "$XDG_DATA_HOME/tmpltr/brands"]
+        },
+        "cache_dir": {
+          "type": "string",
+          "description": "Cache directory for document index. Supports ~ and environment variables",
+          "default": "$XDG_CACHE_HOME/tmpltr",
+          "examples": ["~/.cache/tmpltr", "$XDG_CACHE_HOME/tmpltr"]
+        }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "description": "Brand configuration settings",
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "type": "string",
+          "description": "Default brand ID to use when --brand is not specified on the command line",
+          "examples": ["acme-corp", "my-company"]
+        }
+      }
+    },
+    "typst": {
+      "type": "object",
+      "description": "Typst compiler configuration",
+      "additionalProperties": false,
+      "properties": {
+        "binary": {
+          "type": "string",
+          "description": "Path to the typst binary. Leave empty to use PATH lookup",
+          "default": "",
+          "examples": ["", "/usr/local/bin/typst", "~/.cargo/bin/typst"]
+        },
+        "font_paths": {
+          "type": "array",
+          "description": "Additional font paths to search (in addition to system fonts). Supports ~ and environment variables",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "examples": [
+            ["~/Library/Fonts", "/Library/Fonts"],
+            ["~/.local/share/fonts", "/usr/share/fonts"]
+          ]
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output generation settings",
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "type": "string",
+          "description": "Default output format for generated documents",
+          "enum": ["pdf", "svg", "html"],
+          "default": "pdf"
+        },
+        "watch_debounce_ms": {
+          "type": "integer",
+          "description": "Debounce time in milliseconds for watch mode file change detection",
+          "default": 300,
+          "minimum": 0,
+          "maximum": 10000
+        }
+      }
+    },
+    "experimental": {
+      "type": "object",
+      "description": "Experimental features (may change or be removed)",
+      "additionalProperties": false,
+      "properties": {
+        "html": {
+          "type": "boolean",
+          "description": "Enable experimental HTML output support",
+          "default": false
+        }
+      }
+    }
+  }
+}
