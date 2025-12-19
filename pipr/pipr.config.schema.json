@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tommyfalkowski/pipr/schemas/config.schema.json",
+  "title": "pipr configuration",
+  "description": "Configuration schema for pipr - a lean Pipedrive CLI",
+  "type": "object",
+  "properties": {
+    "api_token": {
+      "type": "string",
+      "description": "Pipedrive API token. Get yours from https://app.pipedrive.com/settings/api",
+      "default": ""
+    },
+    "domain": {
+      "type": "string",
+      "description": "Pipedrive API domain",
+      "default": "api.pipedrive.com"
+    },
+    "display": {
+      "type": "object",
+      "description": "Display settings for human-readable output",
+      "properties": {
+        "persons": {
+          "type": "object",
+          "description": "Display settings for persons",
+          "properties": {
+            "fields": {
+              "type": "array",
+              "description": "Fields to display by default (use --full to show all)",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "id",
+                  "email",
+                  "phone",
+                  "org_name",
+                  "owner_name",
+                  "label",
+                  "job_title",
+                  "add_time",
+                  "update_time",
+                  "visible_to",
+                  "active_flag"
+                ]
+              },
+              "default": ["name", "email", "phone", "org_name"],
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
