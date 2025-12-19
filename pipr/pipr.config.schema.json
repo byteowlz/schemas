@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/tommyfalkowski/pipr/schemas/config.schema.json",
   "title": "pipr configuration",
   "description": "Configuration schema for pipr - a lean Pipedrive CLI",
@@ -9,6 +9,10 @@
       "type": "string",
       "description": "Pipedrive API token. Get yours from https://app.pipedrive.com/settings/api",
       "default": ""
+    },
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support"
     },
     "domain": {
       "type": "string",
