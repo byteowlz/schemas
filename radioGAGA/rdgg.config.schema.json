@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "rdgg config.toml",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "profile": {
+      "type": "string",
+      "default": "default",
+      "description": "Active profile name."
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["off", "error", "warn", "info", "debug", "trace"],
+          "default": "info"
+        },
+        "file": {
+          "type": ["string", "null"],
+          "description": "Optional log file path; supports ~ and environment variables."
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parallelism": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Worker pool size; defaults to logical CPU count when unset."
+        },
+        "timeout": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "default": 60,
+          "description": "Timeout in seconds for long-running operations."
+        },
+        "fail_fast": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bind": { "type": "string", "default": "127.0.0.1" },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535, "default": 7878 }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "media": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Media root directories to scan."
+        },
+        "data": { "type": "string", "description": "Data directory; supports ~ and environment variables." },
+        "state": { "type": "string", "description": "State directory; supports ~ and environment variables." },
+        "cache": { "type": "string", "description": "Cache directory; supports ~ and environment variables." },
+        "sidecars": {
+          "type": "string",
+          "enum": ["adjacent", "central"],
+          "default": "adjacent"
+        }
+      }
+    },
+    "users": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default_profile": { "type": "string", "default": "adult" }
+      }
+    },
+    "playback": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "type": "string",
+          "enum": ["gstreamer", "ffmpeg-cpal"],
+          "default": "gstreamer",
+          "description": "Local playback backend selection."
+        },
+        "album_replaygain_target_lufs": { "type": "number", "default": -18.0 },
+        "track_replaygain_target_lufs": { "type": "number", "default": -16.0 },
+        "enable_limiter": { "type": "boolean", "default": true }
+      }
+    },
+    "tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "jump_back": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "short_idle_max_seconds": { "type": "integer", "minimum": 0, "default": 300 },
+            "short_rewind_seconds": { "type": "integer", "minimum": 0, "default": 3 },
+            "long_idle_min_seconds": { "type": "integer", "minimum": 0, "default": 3600 },
+            "long_rewind_seconds": { "type": "integer", "minimum": 0, "default": 30 },
+            "min_position_seconds": { "type": "integer", "minimum": 0, "default": 15 }
+          }
+        },
+        "profiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "jump_back": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "enabled": { "type": "boolean", "default": true },
+                  "short_idle_max_seconds": { "type": "integer", "minimum": 0, "default": 300 },
+                  "short_rewind_seconds": { "type": "integer", "minimum": 0, "default": 3 },
+                  "long_idle_min_seconds": { "type": "integer", "minimum": 0, "default": 3600 },
+                  "long_rewind_seconds": { "type": "integer", "minimum": 0, "default": 30 },
+                  "min_position_seconds": { "type": "integer", "minimum": 0, "default": 15 }
+                }
+              }
+            }
+          },
+          "default": {}
+        }
+      }
+    },
+    "transcoding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": { "type": "boolean", "default": true },
+        "cache": { "type": "boolean", "default": true },
+        "ffmpeg_path": {
+          "type": "string",
+          "default": "ffmpeg",
+          "description": "ffmpeg binary to use (PATH name or absolute path)."
+        },
+        "hls_segment_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 6,
+          "description": "HLS segment duration in seconds for session streaming."
+        }
+      }
+    },
+    "streaming": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "formats": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": { "type": "boolean", "default": true }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "homeassistant": { "type": "boolean", "default": true },
+        "jellyfin_import": { "type": "boolean", "default": false }
+      }
+    },
+    "sync": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": { "type": "boolean", "default": false }
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ssdp": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": { "type": "boolean", "default": false },
+            "interval_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 300,
+              "description": "How often to run SSDP discovery."
+            },
+            "mx_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "default": 2,
+              "description": "MX value for SSDP M-SEARCH."
+            },
+            "timeout_milliseconds": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1500,
+              "description": "How long to wait for SSDP responses per discovery run."
+            },
+            "search_targets": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": [
+                "urn:schemas-upnp-org:device:MediaRenderer:1",
+                "urn:schemas-upnp-org:device:ZonePlayer:1"
+              ],
+              "description": "SSDP ST values to search for."
+            },
+            "fetch_device_description": {
+              "type": "boolean",
+              "default": true,
+              "description": "Fetch and cache the UPnP device description XML to improve naming and classification."
+            },
+            "device_description_timeout_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 5,
+              "description": "HTTP timeout when fetching device description XML."
+            }
+          }
+        },
+        "mdns": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enable": { "type": "boolean", "default": false },
+            "interval_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 300,
+              "description": "How often to run mDNS discovery."
+            },
+            "timeout_milliseconds": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1500,
+              "description": "How long to wait for mDNS responses per discovery run."
+            },
+            "service_types": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["_googlecast._tcp.local.", "_airplay._tcp.local."],
+              "description": "mDNS service types to browse."
+            }
+          }
+        }
+      }
+    },
+    "rss": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": { "type": "boolean", "default": false },
+        "interval_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 900,
+          "description": "Poll interval for enabled feeds."
+        },
+        "feeds": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "url": { "type": "string" },
+              "enabled": { "type": "boolean", "default": true }
+            },
+            "required": ["url"]
+          }
+        }
+      }
+    },
+    "tts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": { "type": "boolean", "default": false },
+        "cache_enable": { "type": "boolean", "default": true },
+        "websocket_url": { "type": "string", "default": "ws://localhost:8080" },
+        "default_voice": { "type": ["string", "null"] },
+        "default_language": { "type": "string", "default": "en-us" },
+        "timeout_seconds": { "type": "integer", "minimum": 1, "default": 60 }
+      }
+    },
+    "jobs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": { "type": "boolean", "default": false },
+        "poll_interval_milliseconds": { "type": "integer", "minimum": 1, "default": 1000 },
+        "parallelism": { "type": "integer", "minimum": 1, "default": 4 },
+        "claim_limit": { "type": "integer", "minimum": 1, "default": 32 },
+        "lock_seconds": { "type": "integer", "minimum": 1, "default": 60 },
+        "backoff_base_seconds": { "type": "integer", "minimum": 1, "default": 5 }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "admin_token": {
+          "type": ["string", "null"],
+          "description": "Admin token (secret)."
+        },
+        "stream_token_secret": {
+          "type": ["string", "null"],
+          "description": "Stream token signing secret (secret)."
+        },
+        "stream_token_default_ttl_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 600,
+          "description": "Default TTL for minted stream URL tokens."
+        },
+        "stream_token_max_ttl_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3600,
+          "description": "Maximum TTL for minted stream URL tokens."
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["default", "base16"],
+          "default": "default"
+        },
+        "base16_dir": {
+          "type": ["string", "null"],
+          "description": "Path to tinty base16 theme directory."
+        },
+        "current": {
+          "type": ["string", "null"],
+          "description": "Current base16 theme name."
+        }
+      }
+    }
+  }
+}

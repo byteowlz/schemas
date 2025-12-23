@@ -159,6 +159,92 @@
         }
       },
       "additionalProperties": false
+    },
+    "rulesets": {
+      "type": "object",
+      "description": "Named rulesets for common use cases (programming, gdpr, hipaa, etc.)",
+      "additionalProperties": {
+        "$ref": "#/definitions/ruleset"
+      }
+    },
+    "patterns": {
+      "type": "object",
+      "description": "Per-pattern configuration overrides",
+      "additionalProperties": {
+        "$ref": "#/definitions/pattern_config"
+      }
+    }
+  },
+  "definitions": {
+    "ruleset": {
+      "type": "object",
+      "description": "A ruleset is a named preset for common use cases",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the ruleset"
+        },
+        "enabled_patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Patterns to enable for this ruleset"
+        },
+        "disabled_patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Patterns to disable for this ruleset"
+        },
+        "min_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Minimum confidence level override"
+        },
+        "ner": {
+          "type": "string",
+          "enum": ["auto", "on", "off"],
+          "description": "NER mode: auto (use when needed), on (always), off (never)",
+          "default": "auto"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["placeholder", "mask", "hash", "random", "consistent"],
+          "description": "Replacement strategy override"
+        },
+        "pattern_strategies": {
+          "type": "object",
+          "description": "Per-pattern strategy overrides within this ruleset",
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["placeholder", "mask", "hash", "random", "consistent"]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "pattern_config": {
+      "type": "object",
+      "description": "Configuration for a specific pattern",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this pattern is enabled by default"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["placeholder", "mask", "hash", "random", "consistent"],
+          "description": "Replacement strategy for this pattern"
+        },
+        "template": {
+          "type": "string",
+          "description": "Custom replacement template (for placeholder strategy)"
+        },
+        "min_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Minimum confidence override for this pattern"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

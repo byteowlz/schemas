@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://tmpltr.dev/schemas/config.schema.json",
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/tmpltr/tmpltr.config.schema.json",
   "title": "tmpltr Configuration",
   "description": "Configuration schema for tmpltr - a Typst-based document template engine",
   "type": "object",
@@ -19,7 +19,11 @@
           "type": "string",
           "description": "Directory containing templates. Supports ~ and environment variables like $XDG_DATA_HOME",
           "default": "$XDG_DATA_HOME/tmpltr/templates",
-          "examples": ["~/templates", "$XDG_DATA_HOME/tmpltr/templates", "/opt/tmpltr/templates"]
+          "examples": [
+            "~/templates",
+            "$XDG_DATA_HOME/tmpltr/templates",
+            "/opt/tmpltr/templates"
+          ]
         },
         "schemas_dir": {
           "type": "string",
