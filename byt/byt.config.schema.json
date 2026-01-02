@@ -106,6 +106,54 @@
         }
       },
       "additionalProperties": false
+    },
+    "sync": {
+      "type": "object",
+      "description": "Memory sync settings",
+      "properties": {
+        "sync_dir": {
+          "type": "string",
+          "description": "Directory for memory sync files (relative to workspace or absolute). Set to 'govnr/.sync/memories' to keep sync files in the govnr repo.",
+          "default": ".sync/memories"
+        }
+      },
+      "additionalProperties": false
+    },
+    "machines": {
+      "type": "array",
+      "description": "All machines in the ecosystem. byt auto-detects which is local by matching hostname.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Machine name for display"
+          },
+          "hostname": {
+            "type": "string",
+            "description": "Hostname to match against (compared with `hostname` command output). If not set, uses 'name' as the hostname."
+          },
+          "host": {
+            "type": "string",
+            "description": "SSH host (user@host or just host) - used when connecting remotely. If not set, uses hostname (or name if hostname not set)."
+          },
+          "port": {
+            "type": "integer",
+            "description": "SSH port",
+            "default": 22
+          },
+          "workspace": {
+            "type": "string",
+            "description": "Path to workspace on this machine"
+          },
+          "identity_file": {
+            "type": "string",
+            "description": "SSH identity file path"
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
     }
   },
   "additionalProperties": false

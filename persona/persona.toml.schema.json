@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/byteowlz/persona/schemas/persona.toml.schema.json",
+  "title": "persona template",
+  "description": "Schema for persona template files (persona.toml).",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support"
+    },
+    "name": {
+      "type": "string",
+      "description": "Persona display name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short persona description"
+    },
+    "color": {
+      "type": "string",
+      "description": "Persona accent color (hex or named)"
+    },
+    "avatar": {
+      "type": "string",
+      "description": "Path to avatar image (PNG or SVG) relative to the template directory, max 512x512"
+    },
+    "is_default": {
+      "type": "boolean",
+      "description": "Mark this persona as the default template",
+      "default": false
+    }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

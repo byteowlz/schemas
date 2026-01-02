@@ -275,6 +275,22 @@
           "default": 900,
           "description": "Poll interval for enabled feeds."
         },
+        "auto_ingest": {
+          "type": "boolean",
+          "default": true,
+          "description": "When enabled, new RSS items enqueue ingest jobs (requires jobs.enable)."
+        },
+        "auto_tts": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, RSS-ingested articles enqueue an article_tts job (requires jobs.enable and tts.enable)."
+        },
+        "global_keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Optional keyword filter applied to all feeds (matches title/summary/content). Use \"*\" to match all."
+        },
         "feeds": {
           "type": "array",
           "default": [],
@@ -283,7 +299,14 @@
             "additionalProperties": false,
             "properties": {
               "url": { "type": "string" },
-              "enabled": { "type": "boolean", "default": true }
+              "enabled": { "type": "boolean", "default": true },
+              "name": { "type": ["string", "null"] },
+              "category": { "type": ["string", "null"] },
+              "keywords": {
+                "type": "array",
+                "items": { "type": "string" },
+                "default": []
+              }
             },
             "required": ["url"]
           }
@@ -294,9 +317,19 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["websocket", "kokorox"],
+          "default": "websocket",
+          "description": "TTS backend provider."
+        },
         "enable": { "type": "boolean", "default": false },
         "cache_enable": { "type": "boolean", "default": true },
         "websocket_url": { "type": "string", "default": "ws://localhost:8080" },
+        "kokorox_base_url": { "type": "string", "default": "http://localhost:8880/v1" },
+        "kokorox_api_key": { "type": ["string", "null"] },
+        "kokorox_model": { "type": "string", "default": "tts-1" },
+        "kokorox_speed": { "type": "number", "default": 1.0 },
         "default_voice": { "type": ["string", "null"] },
         "default_language": { "type": "string", "default": "en-us" },
         "timeout_seconds": { "type": "integer", "minimum": 1, "default": 60 }
