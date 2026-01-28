@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "hstry config",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "database": {
+      "type": "string",
+      "description": "Path to the hstry database file."
+    },
+    "adapter_paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Directories to search for adapters."
+    },
+    "js_runtime": {
+      "type": "string",
+      "enum": ["auto", "bun", "deno", "node"],
+      "description": "Preferred JavaScript runtime."
+    },
+    "embedding_endpoint": {
+      "type": ["string", "null"],
+      "description": "Optional embedding endpoint."
+    },
+    "workspaces": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Workspace roots to scan recursively."
+    },
+    "adapters": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/AdapterConfig" }
+    },
+    "service": {
+      "$ref": "#/definitions/ServiceConfig"
+    },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/SourceConfig" }
+    }
+  },
+  "required": [
+    "database",
+    "adapter_paths",
+    "js_runtime",
+    "workspaces",
+    "adapters",
+    "service",
+    "sources"
+  ],
+  "definitions": {
+    "AdapterConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "enabled": { "type": "boolean", "default": true }
+      },
+      "required": ["name"]
+    },
+    "ServiceConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "poll_interval_secs": { "type": "integer", "minimum": 1, "default": 30 }
+      },
+      "required": ["enabled", "poll_interval_secs"]
+    },
+    "SourceConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "adapter": { "type": "string" },
+        "path": { "type": "string" },
+        "auto_sync": { "type": "boolean", "default": true }
+      },
+      "required": ["id", "adapter", "path"]
+    }
+  }
+}
