@@ -1,60 +1,65 @@
 {
-  "$id": "pi-agent.auth.schema.json",
-  "title": "Pi Coding Agent Auth Storage",
-  "description": "Credential storage for API keys and OAuth tokens (~/.pi/agent/auth.json)",
-  "type": "object",
-  "patternProperties": {
-    "^(.*)$": {
-      "description": "Credential entry (API key or OAuth tokens)",
-      "anyOf": [
-        {
-          "additionalProperties": false,
-          "type": "object",
-          "required": [
-            "type",
-            "key"
-          ],
-          "properties": {
-            "type": {
-              "const": "api_key",
-              "type": "string"
-            },
-            "key": {
-              "description": "The API key value",
-              "type": "string"
-            }
-          }
-        },
-        {
-          "additionalProperties": false,
-          "type": "object",
-          "required": [
-            "type",
-            "accessToken",
-            "refreshToken",
-            "expires"
-          ],
-          "properties": {
-            "type": {
-              "const": "oauth",
-              "type": "string"
-            },
-            "accessToken": {
-              "description": "OAuth access token",
-              "type": "string"
-            },
-            "refreshToken": {
-              "description": "OAuth refresh token",
-              "type": "string"
-            },
-            "expires": {
-              "description": "Token expiration timestamp (ms since epoch)",
-              "type": "number"
-            }
-          }
-        }
-      ]
-    }
-  },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+	"$id": "https://buildwithpi.ai/schemas/auth.schema.json",
+	"title": "Pi Coding Agent Auth Storage",
+	"description": "Credential storage for API keys and OAuth tokens (~/.pi/agent/auth.json)",
+	"type": "object",
+	"patternProperties": {
+		"^(.*)$": {
+			"description": "Credential entry (API key or OAuth tokens)",
+			"anyOf": [
+				{
+					"additionalProperties": false,
+					"type": "object",
+					"required": [
+						"type",
+						"key"
+					],
+					"properties": {
+						"type": {
+							"const": "api_key",
+							"type": "string"
+						},
+						"key": {
+							"description": "The API key value",
+							"type": "string"
+						}
+					}
+				},
+				{
+					"additionalProperties": true,
+					"description": "OAuth credentials (may include provider-specific fields)",
+					"type": "object",
+					"required": [
+						"type",
+						"access",
+						"refresh",
+						"expires"
+					],
+					"properties": {
+						"type": {
+							"const": "oauth",
+							"type": "string"
+						},
+						"access": {
+							"description": "OAuth access token",
+							"type": "string"
+						},
+						"refresh": {
+							"description": "OAuth refresh token",
+							"type": "string"
+						},
+						"expires": {
+							"description": "Token expiration timestamp (ms since epoch)",
+							"type": "number"
+						},
+						"accountId": {
+							"description": "Account ID (provider-specific)",
+							"type": "string"
+						}
+					}
+				}
+			]
+		}
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#"
 }
