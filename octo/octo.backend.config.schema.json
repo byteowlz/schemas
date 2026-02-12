@@ -161,6 +161,12 @@
           "description": "Whether to stop local sessions when the backend shuts down. Disable to keep opencode/fileserver/ttyd running.",
           "default": false
         },
+        "runner_socket_pattern": {
+          "type": ["string", "null"],
+          "description": "Runner socket path pattern for per-user octo-runner daemons. Supports {user} (Linux username) and {uid}. Example: /run/user/{uid}/octo-runner.sock. Required for spawning per-user services (e.g. per-user mmry) via the runner.",
+          "default": null,
+          "examples": ["/run/octo/runner-sockets/{user}/octo-runner.sock", "/run/user/{uid}/octo-runner.sock"]
+        },
         "single_user": {
           "type": "boolean",
           "description": "Enable single-user mode. When true, the platform operates with a single user (no multi-tenancy), and the {user_id} placeholder in workspace_dir is ignored. Required on macOS/Windows.",
@@ -220,6 +226,85 @@
       },
       "additionalProperties": false,
       "x-note": "Sandbox configuration is in a separate file (~/.config/octo/sandbox.toml) for security. See sandbox.schema.json."
+    },
+    "runner": {
+      "type": "object",
+      "description": "Runner configuration for user-plane isolation. The octo-runner daemon reads this section to locate user data directories. This enables existing users to use their current data locations without migration.",
+      "x-scope": "user",
+      "x-category": "Infrastructure",
+      "properties": {
+        "runner_id": {
+          "type": ["string", "null"],
+          "description": "Human-readable runner identifier. Defaults to $OCTO_RUNNER_ID, $HOSTNAME, or \"local\".",
+          "default": null,
+          "examples": ["workstation-1", "wkst-alice-01", "local"]
+        },
+        "pi_sessions_dir": {
+          "type": ["string", "null"],
+          "description": "Directory containing Pi session files (for main chat history). Supports ~ for home directory. Defaults to $XDG_DATA_HOME/pi/sessions (~/.local/share/pi/sessions).",
+          "default": null,
+          "examples": ["~/.local/share/pi/sessions", "/home/alice/.local/share/pi/sessions", "~/pi-sessions"]
+        },
+        "memories_dir": {
+          "type": ["string", "null"],
+          "description": "Directory containing memories (mmry database). Supports ~ for home directory. Defaults to $XDG_DATA_HOME/mmry (~/.local/share/mmry).",
+          "default": null,
+          "examples": ["~/.local/share/mmry", "/home/alice/.local/share/mmry", "~/memories"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "agent_browser": {
+      "type": "object",
+      "description": "Agent-browser daemon configuration for server-side browser sessions.",
+      "x-scope": "admin",
+      "x-category": "Infrastructure",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable per-session agent-browser daemon management.",
+          "default": false
+        },
+        "binary": {
+          "type": "string",
+          "description": "Path to the agent-browser CLI binary.",
+          "default": "agent-browser",
+          "examples": ["agent-browser", "/usr/local/bin/agent-browser"]
+        },
+        "headed": {
+          "type": "boolean",
+          "description": "Launch browser windows in headed mode instead of headless.",
+          "default": false
+        },
+        "stream_port_base": {
+          "type": "integer",
+          "description": "Base port for screencast WebSocket streams.",
+          "minimum": 1024,
+          "maximum": 65535,
+          "default": 30000
+        },
+        "stream_port_range": {
+          "type": "integer",
+          "description": "Port range size for per-session screencast streams.",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 10000
+        },
+        "executable_path": {
+          "type": "string",
+          "description": "Optional Chromium executable path (overrides Playwright default).",
+          "examples": ["/usr/bin/chromium", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
+        },
+        "extensions": {
+          "type": "array",
+          "description": "Optional extensions to load (absolute paths).",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": false
     },
     "eavs": {
       "type": "object",
@@ -520,6 +605,12 @@
           "description": "Idle cleanup check interval in seconds",
           "minimum": 10,
           "default": 300
+        },
+        "chat_prefetch_limit": {
+          "type": "integer",
+          "description": "Number of recent chat sessions to prefetch messages for",
+          "minimum": 0,
+          "default": 8
         }
       },
       "additionalProperties": false
@@ -562,6 +653,12 @@
           "description": "Path to a local clone of the templates repository on the host",
           "default": null
         },
+        "type": {
+          "type": "string",
+          "enum": ["remote", "local"],
+          "description": "Repository type: remote (git) or local (filesystem)",
+          "default": "remote"
+        },
         "sync_on_list": {
           "type": "boolean",
           "description": "Sync the templates repository before listing or creating projects",
@@ -571,6 +668,93 @@
           "type": "integer",
           "description": "Minimum seconds between template repository sync attempts",
           "default": 120
+        }
+      },
+      "additionalProperties": false
+    },
+    "onboarding_templates": {
+      "type": "object",
+      "description": "Onboarding templates repository configuration",
+      "x-scope": "admin",
+      "x-category": "Infrastructure",
+      "properties": {
+        "repo_url": {
+          "type": "string",
+          "description": "Git repository URL for onboarding templates",
+          "default": "https://github.com/byteowlz/octo-templates"
+        },
+        "local_path": {
+          "type": ["string", "null"],
+          "description": "Local path to templates directory (overrides repo_url)",
+          "default": null
+        },
+        "cache_path": {
+          "type": ["string", "null"],
+          "description": "Path where remote repo is cloned",
+          "default": null
+        },
+        "sync_enabled": {
+          "type": "boolean",
+          "description": "Sync from remote before using templates",
+          "default": true
+        },
+        "sync_interval_seconds": {
+          "type": "integer",
+          "description": "Minimum seconds between sync attempts",
+          "default": 300
+        },
+        "use_embedded_fallback": {
+          "type": "boolean",
+          "description": "Use embedded templates if repo is unavailable",
+          "default": true
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch to use from remote repo",
+          "default": "main"
+        },
+        "subdirectory": {
+          "type": "string",
+          "description": "Subdirectory within repo containing onboarding templates",
+          "default": "onboarding"
+        },
+        "defaults": {
+          "type": "object",
+          "description": "Default template file names",
+          "properties": {
+            "onboard": { "type": "string", "default": "ONBOARD.md" },
+            "personality": { "type": "string", "default": "PERSONALITY.md" },
+            "user": { "type": "string", "default": "USER.md" },
+            "agents": { "type": "string", "default": "AGENTS.md" }
+          },
+          "additionalProperties": false
+        },
+        "presets": {
+          "type": "object",
+          "description": "Named presets for user onboarding",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string", "default": "" },
+              "onboard": { "type": ["string", "null"], "default": null },
+              "personality": { "type": ["string", "null"], "default": null },
+              "user": { "type": ["string", "null"], "default": null },
+              "agents": { "type": ["string", "null"], "default": null },
+              "skip_stages": {
+                "type": "array",
+                "items": { "type": "string" },
+                "default": []
+              },
+              "unlock_components": {
+                "type": "array",
+                "items": { "type": "string" },
+                "default": []
+              },
+              "user_level": { "type": ["string", "null"], "default": null }
+            },
+            "additionalProperties": false
+          },
+          "default": {}
         }
       },
       "additionalProperties": false
