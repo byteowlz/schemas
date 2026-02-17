@@ -168,8 +168,8 @@
         },
         "master_key": {
           "type": ["string", "null"],
-          "description": "Master key for admin API. Supports 'env:VAR_NAME' syntax.",
-          "examples": ["env:EAVS_MASTER_KEY", "sk-admin-secret"]
+          "description": "Master key for admin API. Supports 'env:VAR_NAME' and 'keychain:account' syntax.",
+          "examples": ["env:EAVS_MASTER_KEY", "keychain:eavs-master-key", "sk-admin-secret"]
         },
         "allow_self_provisioning": {
           "type": "boolean",
@@ -197,6 +197,12 @@
           "type": ["string", "null"],
           "description": "Path to word lists TOML file for human-readable key IDs. If not specified, downloads to XDG data directory.",
           "examples": ["~/.config/eavs/word_lists.toml", null]
+        },
+        "oauth_backend": {
+          "type": "string",
+          "description": "OAuth credential storage backend. 'keychain' uses the system keychain (macOS Keychain, Linux kernel keyutils for headless support, Windows Credential Manager) with automatic fallback to SQLite if unavailable. 'sqlite' stores tokens in plaintext in the same database as virtual API keys.",
+          "default": "keychain",
+          "enum": ["keychain", "sqlite"]
         }
       },
       "additionalProperties": false
@@ -256,7 +262,7 @@
   },
   "$defs": {
     "policyRule": {
-      "description": "Single policy rule (deny/rewrite_model/filter_tools)",
+      "description": "Single policy rule (deny/rewrite_model/filter_tools/set_field)",
       "oneOf": [
         {
           "type": "object",
@@ -324,6 +330,28 @@
           },
           "required": ["action"],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": { "const": "set_field" },
+            "provider": {
+              "type": ["string", "null"],
+              "description": "Glob match against provider name"
+            },
+            "model": {
+              "type": ["string", "null"],
+              "description": "Glob match against requested model"
+            },
+            "path": {
+              "type": ["string", "null"],
+              "description": "Glob match against request path (e.g. */responses)"
+            },
+            "field": { "type": "string", "description": "Top-level field name to set" },
+            "value": { "description": "Value to set (any JSON type)" }
+          },
+          "required": ["action", "field", "value"],
+          "additionalProperties": false
         }
       ]
     },
@@ -378,24 +406,24 @@
             "cerebras",
             "xai",
             "openrouter",
-            "foundry",
-            "azure-foundry",
-            "ai-foundry",
-            "microsoft-foundry",
             "bedrock",
             "aws-bedrock",
             "ollama",
             "vllm",
             "openai-compatible",
             "openai-codex",
-            "openai-responses"
+            "openai-responses",
+            "github-copilot",
+            "google-vertex",
+            "google-gemini-cli",
+            "google-antigravity"
           ],
           "default": "openai"
         },
         "api_key": {
           "type": "string",
-          "description": "API key. Supports 'env:VAR_NAME' syntax to read from environment.",
-          "examples": ["env:OPENAI_API_KEY", "sk-..."]
+          "description": "API key. Supports three syntaxes: 'env:VAR_NAME' to read from environment variable, 'keychain:account' to read from the system keychain (macOS Keychain / libsecret / Windows Credential Manager), or a literal value. Store keychain secrets with 'eavs secret set <account>'.",
+          "examples": ["env:OPENAI_API_KEY", "keychain:openai", "sk-..."]
         },
         "base_url": {
           "type": "string",
@@ -434,24 +462,71 @@
         },
         "aws_access_key_id": {
           "type": "string",
-          "description": "AWS access key id (Bedrock only). Supports 'env:VAR_NAME' syntax.",
-          "examples": ["env:AWS_ACCESS_KEY_ID"]
+          "description": "AWS access key id (Bedrock only). Supports 'env:VAR_NAME' and 'keychain:account' syntax.",
+          "examples": ["env:AWS_ACCESS_KEY_ID", "keychain:aws-access-key-id"]
         },
         "aws_secret_access_key": {
           "type": "string",
-          "description": "AWS secret access key (Bedrock only). Supports 'env:VAR_NAME' syntax.",
-          "examples": ["env:AWS_SECRET_ACCESS_KEY"]
+          "description": "AWS secret access key (Bedrock only). Supports 'env:VAR_NAME' and 'keychain:account' syntax.",
+          "examples": ["env:AWS_SECRET_ACCESS_KEY", "keychain:aws-secret-access-key"]
         },
         "aws_session_token": {
           "type": "string",
-          "description": "AWS session token (Bedrock only, optional). Supports 'env:VAR_NAME' syntax.",
-          "examples": ["env:AWS_SESSION_TOKEN"]
+          "description": "AWS session token (Bedrock only, optional). Supports 'env:VAR_NAME' and 'keychain:account' syntax.",
+          "examples": ["env:AWS_SESSION_TOKEN", "keychain:aws-session-token"]
         },
         "aws_service": {
           "type": "string",
           "description": "AWS service name for SigV4 (Bedrock only).",
           "default": "bedrock",
           "examples": ["bedrock"]
+        },
+        "gcp_project": {
+          "type": "string",
+          "description": "Google Cloud project ID (Vertex AI only). Supports 'env:VAR_NAME' and 'keychain:account' syntax. Falls back to GOOGLE_CLOUD_PROJECT or GCLOUD_PROJECT env vars.",
+          "examples": ["env:GOOGLE_CLOUD_PROJECT", "my-gcp-project"]
+        },
+        "gcp_location": {
+          "type": "string",
+          "description": "Google Cloud location/region (Vertex AI only). Supports 'env:VAR_NAME' syntax. Falls back to GOOGLE_CLOUD_LOCATION env var.",
+          "examples": ["env:GOOGLE_CLOUD_LOCATION", "us-central1", "europe-west1"]
+        },
+        "test_model": {
+          "type": "string",
+          "description": "Model name to use for 'eavs setup test' and 'eavs setup test-all'. Overrides auto-detection from ~/.pi/agent/models.json and built-in defaults.",
+          "examples": ["gpt-4o-mini", "claude-sonnet-4-20250514", "gemini-2.0-flash", "llama-3.3-70b-versatile"]
+        },
+        "models": {
+          "type": "array",
+          "description": "Curated model shortlist for integrations (e.g., generating Pi models.json via octo). If omitted, a built-in default list is used based on provider type.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "description": "Model ID as sent to the API" },
+              "name": { "type": "string", "description": "Human-readable display name" },
+              "reasoning": { "type": "boolean", "description": "Supports extended thinking", "default": false },
+              "input": {
+                "type": "array",
+                "description": "Input modalities",
+                "items": { "type": "string", "enum": ["text", "image"] },
+                "default": ["text"]
+              },
+              "context_window": { "type": "integer", "description": "Context window in tokens", "default": 128000 },
+              "max_tokens": { "type": "integer", "description": "Max output tokens", "default": 16384 },
+              "cost": {
+                "type": "object",
+                "description": "Cost per million tokens",
+                "properties": {
+                  "input": { "type": "number", "default": 0 },
+                  "output": { "type": "number", "default": 0 },
+                  "cache_read": { "type": "number", "default": 0 }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": ["id"],
+            "additionalProperties": false
+          }
         }
       },
       "allOf": [
@@ -466,6 +541,19 @@
               "aws_region",
               "aws_access_key_id",
               "aws_secret_access_key"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "enum": ["google-vertex"] }
+            }
+          },
+          "then": {
+            "required": [
+              "gcp_project",
+              "gcp_location"
             ]
           }
         }
