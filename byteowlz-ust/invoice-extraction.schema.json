@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/byteowlz-ust/invoice-extraction.schema.json",
+  "title": "Invoice Extraction Result",
+  "description": "Structured extraction of invoice data from PDF documents for German USt-Voranmeldung. Used as the output schema for LLM-based invoice analysis.",
+  "type": "object",
+  "properties": {
+    "is_invoice": {
+      "type": "boolean",
+      "description": "True if this document is an invoice (Rechnung) or credit note (Gutschrift). False for letters, forms, offers (Angebote), order confirmations, etc."
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "rechnung",
+        "gutschrift",
+        "angebot",
+        "auftragsbestaetigung",
+        "mahnung",
+        "sonstiges"
+      ],
+      "description": "Type of document: rechnung=invoice, gutschrift=credit note, angebot=offer/quote, auftragsbestaetigung=order confirmation, mahnung=reminder, sonstiges=other"
+    },
+    "vendor": {
+      "type": "object",
+      "description": "Seller/vendor information",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Company name of the seller"
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code (DE, US, IE, NL, etc.)",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "ust_id": {
+          "type": ["string", "null"],
+          "description": "USt-IdNr / VAT ID of the vendor if visible (e.g. DE123456789)",
+          "pattern": "^[A-Z]{2}[0-9A-Za-z]+$"
+        }
+      },
+      "required": ["name", "country"],
+      "additionalProperties": false
+    },
+    "invoice_number": {
+      "type": ["string", "null"],
+      "description": "Invoice number (Rechnungsnummer)"
+    },
+    "invoice_date": {
+      "type": ["string", "null"],
+      "description": "Invoice date in YYYY-MM-DD format",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "amounts": {
+      "type": "object",
+      "description": "Monetary amounts on the invoice",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code",
+          "default": "EUR",
+          "enum": ["EUR", "USD", "GBP", "CHF"]
+        },
+        "net": {
+          "type": ["number", "null"],
+          "description": "Net amount before tax (Nettobetrag)",
+          "minimum": 0
+        },
+        "vat_rate": {
+          "type": ["number", "null"],
+          "description": "VAT rate as percentage (19, 7, 0, etc.)",
+          "enum": [null, 0, 5, 7, 16, 19]
+        },
+        "vat_amount": {
+          "type": ["number", "null"],
+          "description": "VAT amount (MwSt/USt Betrag)",
+          "minimum": 0
+        },
+        "gross": {
+          "type": ["number", "null"],
+          "description": "Gross amount including tax (Bruttobetrag)",
+          "minimum": 0
+        }
+      },
+      "required": ["currency"],
+      "additionalProperties": false
+    },
+    "tax_treatment": {
+      "type": "string",
+      "enum": [
+        "german_vat",
+        "reverse_charge",
+        "eu_reverse_charge",
+        "zero_rated",
+        "exempt",
+        "non_eu",
+        "unknown"
+      ],
+      "description": "How VAT is handled: german_vat=German MwSt charged, reverse_charge=Reverse Charge (Steuerschuldnerschaft geht auf Empfaenger ueber), eu_reverse_charge=EU intra-community, zero_rated=0% VAT, exempt=VAT exempt, non_eu=non-EU vendor, unknown=cannot determine"
+    },
+    "vorsteuer_recoverable": {
+      "type": "boolean",
+      "description": "True if the VAT on this invoice is recoverable as Vorsteuer (input tax) for the German USt-Voranmeldung. Only true for german_vat with a valid VAT amount."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Any relevant notes, warnings, or observations about the document",
+      "default": ""
+    }
+  },
+  "required": [
+    "is_invoice",
+    "document_type",
+    "vendor",
+    "amounts",
+    "tax_treatment",
+    "vorsteuer_recoverable"
+  ],
+  "additionalProperties": false
+}
