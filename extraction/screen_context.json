@@ -1,0 +1,261 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Screen Context Analysis Schema",
+  "description": "Structured analysis of a desktop screenshot with optional accessibility and window metadata. Designed for VLM extraction via xtr from ctx captures.",
+  "properties": {
+    "scene": {
+      "type": "object",
+      "description": "High-level description of what is happening on screen",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "One-sentence summary of the current screen state"
+        },
+        "activity": {
+          "type": "string",
+          "description": "What the user appears to be doing, e.g. writing code, browsing the web, reading email, editing a document"
+        },
+        "domain": {
+          "type": "string",
+          "enum": [
+            "development",
+            "communication",
+            "browsing",
+            "document_editing",
+            "design",
+            "media",
+            "system_admin",
+            "file_management",
+            "data_analysis",
+            "presentation",
+            "terminal",
+            "other"
+          ],
+          "description": "Primary activity domain"
+        },
+        "complexity": {
+          "type": "string",
+          "enum": ["simple", "moderate", "complex"],
+          "description": "Visual complexity of the screen layout"
+        }
+      },
+      "required": ["summary", "activity", "domain"]
+    },
+    "focused_app": {
+      "type": "object",
+      "description": "The application that currently has focus",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Application name as visible on screen"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "editor",
+            "ide",
+            "terminal",
+            "browser",
+            "email",
+            "chat",
+            "file_manager",
+            "media_player",
+            "design_tool",
+            "spreadsheet",
+            "word_processor",
+            "presentation",
+            "settings",
+            "other"
+          ],
+          "description": "Application category"
+        },
+        "state": {
+          "type": "string",
+          "description": "Current state of the app, e.g. editing file main.rs, composing new email, viewing search results"
+        }
+      },
+      "required": ["name", "category"]
+    },
+    "content": {
+      "type": "object",
+      "description": "Details about the visible content",
+      "properties": {
+        "primary_content_type": {
+          "type": "string",
+          "enum": [
+            "source_code",
+            "text_document",
+            "spreadsheet",
+            "email",
+            "chat_messages",
+            "web_page",
+            "terminal_output",
+            "image",
+            "video",
+            "file_listing",
+            "form",
+            "dashboard",
+            "settings_panel",
+            "diagram",
+            "other"
+          ],
+          "description": "Type of content primarily visible"
+        },
+        "language": {
+          "type": "string",
+          "description": "Programming language if source code is visible, or natural language of text content"
+        },
+        "key_elements": {
+          "type": "array",
+          "description": "Notable UI elements, text fragments, or data points visible on screen",
+          "items": {
+            "type": "string"
+          }
+        },
+        "file_path": {
+          "type": "string",
+          "description": "File path visible in title bar, tab, or breadcrumb if any"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL visible in browser address bar if applicable"
+        }
+      },
+      "required": ["primary_content_type"]
+    },
+    "ui_state": {
+      "type": "object",
+      "description": "State of the user interface",
+      "properties": {
+        "dialogs_open": {
+          "type": "boolean",
+          "description": "Whether any modal dialog, popup, or overlay is visible"
+        },
+        "dialog_type": {
+          "type": "string",
+          "enum": [
+            "alert",
+            "confirmation",
+            "file_picker",
+            "search",
+            "settings",
+            "notification",
+            "context_menu",
+            "autocomplete",
+            "other"
+          ],
+          "description": "Type of dialog if one is open"
+        },
+        "dialog_message": {
+          "type": "string",
+          "description": "Text content of the dialog if readable"
+        },
+        "panels_visible": {
+          "type": "array",
+          "description": "Side panels, toolbars, or panes visible in the UI",
+          "items": {
+            "type": "string"
+          }
+        },
+        "split_view": {
+          "type": "boolean",
+          "description": "Whether the screen shows a split or multi-pane layout"
+        },
+        "tabs_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tabs visible in the focused application"
+        },
+        "active_tab": {
+          "type": "string",
+          "description": "Label or title of the currently active tab"
+        }
+      },
+      "required": ["dialogs_open"]
+    },
+    "errors_and_warnings": {
+      "type": "array",
+      "description": "Any error messages, warnings, or notifications visible on screen",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info", "notification"],
+            "description": "Severity level"
+          },
+          "message": {
+            "type": "string",
+            "description": "The error or warning text"
+          },
+          "source": {
+            "type": "string",
+            "description": "Where the error appears, e.g. terminal, IDE problems panel, browser console, dialog"
+          }
+        },
+        "required": ["severity", "message"]
+      }
+    },
+    "actionable_items": {
+      "type": "array",
+      "description": "Buttons, links, or interactive elements that appear to need user attention or action",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Text label of the actionable element"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["button", "link", "input_field", "checkbox", "dropdown", "menu_item", "other"],
+            "description": "Type of interactive element"
+          },
+          "appears_urgent": {
+            "type": "boolean",
+            "description": "Whether this item appears to need immediate attention"
+          }
+        },
+        "required": ["label", "type"]
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "description": "Workspace and multi-window context",
+      "properties": {
+        "visible_windows_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of distinct application windows visible"
+        },
+        "background_apps": {
+          "type": "array",
+          "description": "Applications visible in the background or partially occluded",
+          "items": {
+            "type": "string"
+          }
+        },
+        "desktop_visible": {
+          "type": "boolean",
+          "description": "Whether the desktop background is partially visible"
+        },
+        "menubar_items": {
+          "type": "array",
+          "description": "Notable items visible in the system menu bar or taskbar",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "suggestions": {
+      "type": "array",
+      "description": "Contextual suggestions for what an AI agent could help with based on the current screen state",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["scene", "focused_app", "content", "ui_state"]
+}

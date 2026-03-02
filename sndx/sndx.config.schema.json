@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/byteowlz/sndx/schemas/config.schema.json",
+  "title": "sndx Configuration",
+  "description": "Configuration schema for sndx - MLX Audio CLI",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support"
+    },
+    "default_models": {
+      "type": "object",
+      "description": "Default model repositories",
+      "properties": {
+        "tts": {
+          "type": "string",
+          "default": "mlx-community/soprano-80M-bf16",
+          "description": "Default text-to-speech model"
+        },
+        "stt": {
+          "type": "string",
+          "default": "mlx-community/glm-asr-nano-2512-4bit",
+          "description": "Default speech-to-text model"
+        },
+        "diarization": {
+          "type": "string",
+          "default": "mlx-community/diar_streaming_sortformer_4spk-v2.1-fp16",
+          "description": "Default speaker diarization model"
+        }
+      }
+    },
+    "huggingface": {
+      "type": "object",
+      "description": "HuggingFace Hub settings",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "HuggingFace API token (can also use HF_TOKEN env var)"
+        },
+        "cache_dir": {
+          "type": "string",
+          "default": "~/.cache/mlx-audio",
+          "description": "Directory for cached models"
+        }
+      }
+    },
+    "audio": {
+      "type": "object",
+      "description": "Audio output settings",
+      "properties": {
+        "default_output_dir": {
+          "type": "string",
+          "default": "./output",
+          "description": "Default directory for output files"
+        },
+        "default_format": {
+          "type": "string",
+          "enum": ["wav"],
+          "default": "wav",
+          "description": "Default output audio format"
+        },
+        "sample_rate": {
+          "type": "integer",
+          "default": 24000,
+          "description": "Default sample rate for audio generation"
+        }
+      }
+    },
+    "generation": {
+      "type": "object",
+      "description": "Generation parameters",
+      "properties": {
+        "max_tokens": {
+          "type": "integer",
+          "default": 512,
+          "minimum": 1,
+          "description": "Maximum tokens to generate"
+        },
+        "temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Sampling temperature"
+        },
+        "top_p": {
+          "type": "number",
+          "default": 0.95,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Top-p (nucleus) sampling"
+        },
+        "repetition_penalty": {
+          "type": "number",
+          "default": 1.1,
+          "minimum": 1,
+          "description": "Penalty for token repetition"
+        }
+      }
+    },
+    "diarization": {
+      "type": "object",
+      "description": "Speaker diarization settings",
+      "properties": {
+        "default_speakers": {
+          "type": "integer",
+          "default": 4,
+          "minimum": 2,
+          "description": "Default expected number of speakers"
+        },
+        "threshold": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Speaker detection threshold"
+        },
+        "min_segment_duration": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0,
+          "description": "Minimum speaker segment duration in seconds"
+        }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "description": "UI preferences",
+      "properties": {
+        "color": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable colored output"
+        },
+        "progress": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show progress indicators"
+        },
+        "verbose": {
+          "type": "boolean",
+          "default": false,
+          "description": "Verbose output mode"
+        }
+      }
+    },
+    "speakers": {
+      "type": "array",
+      "description": "Known speaker profiles for diarization",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Speaker name"
+          },
+          "reference_audio": {
+            "type": "string",
+            "description": "Path to reference audio sample"
+          },
+          "reference_text": {
+            "type": "string",
+            "description": "Transcription of reference audio"
+          }
+        },
+        "required": ["name"]
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/byteowlz/fndry/schemas/config.schema.json",
+  "title": "fndry configuration",
+  "description": "Configuration schema for fndry CLI",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support"
+    },
+    "fndry": {
+      "type": "object",
+      "properties": {
+        "subscription_id": {
+          "type": "string",
+          "description": "Azure subscription ID. If not set, auto-detected from `az account show`.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "resource_group": {
+          "type": "string",
+          "description": "Default Azure resource group name"
+        },
+        "project_name": {
+          "type": "string",
+          "description": "Default Azure AI Foundry project name"
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "Azure AI Project endpoint URL"
+        },
+        "output_format": {
+          "type": "string",
+          "enum": ["table", "json", "jsonl"],
+          "default": "table",
+          "description": "Default output format"
+        },
+        "no_color": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable colored output"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["fndry"],
+  "additionalProperties": false
+}
