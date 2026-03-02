@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/byteowlz/schemas/h8/h8.trip.schema.json",
+  "title": "h8 trip export",
+  "description": "Schema for h8 business trip data, suitable for SAP import or other ERP systems",
+  "type": "object",
+  "required": [
+    "trip_type",
+    "destination",
+    "origin",
+    "date",
+    "transport_mode",
+    "travel_duration_minutes",
+    "depart_time",
+    "meeting_start",
+    "meeting_end",
+    "return_time",
+    "total_duration_minutes"
+  ],
+  "properties": {
+    "trip_type": {
+      "type": "string",
+      "enum": ["business_trip"],
+      "description": "Type of trip"
+    },
+    "destination": {
+      "type": "string",
+      "description": "Destination address or city name"
+    },
+    "origin": {
+      "type": "string",
+      "description": "Origin address"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Trip date (YYYY-MM-DD)"
+    },
+    "transport_mode": {
+      "type": "string",
+      "enum": ["car", "transit"],
+      "description": "Mode of transport"
+    },
+    "distance_km": {
+      "type": ["number", "null"],
+      "description": "One-way distance in kilometers (null for transit)"
+    },
+    "travel_duration_minutes": {
+      "type": "integer",
+      "description": "One-way travel duration in minutes"
+    },
+    "depart_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Departure time from origin (ISO 8601)"
+    },
+    "meeting_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Meeting start time at destination (ISO 8601)"
+    },
+    "meeting_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Meeting end time at destination (ISO 8601)"
+    },
+    "return_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Expected return time at origin (ISO 8601)"
+    },
+    "total_duration_minutes": {
+      "type": "integer",
+      "description": "Total trip duration from departure to return in minutes"
+    },
+    "vehicle": {
+      "type": "object",
+      "description": "Booked vehicle details (if car trip with booking)",
+      "properties": {
+        "alias": { "type": "string" },
+        "description": { "type": "string" },
+        "email": { "type": "string", "format": "email" }
+      }
+    }
+  },
+  "additionalProperties": false
+}
