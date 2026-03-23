@@ -1,0 +1,310 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/byteowlz/owlbench/schemas/config.schema.json",
+  "title": "owlbench-cli configuration",
+  "description": "Configuration schema for owlbench-cli - local AI benchmark runner",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor support"
+    },
+    "profile": {
+      "type": "string",
+      "description": "Active configuration profile name",
+      "default": "default"
+    },
+    "logging": {
+      "type": "object",
+      "description": "Logging configuration",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["error", "warn", "info", "debug", "trace"],
+          "description": "Log level",
+          "default": "info"
+        },
+        "file": {
+          "type": ["string", "null"],
+          "description": "Optional log file path; supports ~ and environment variables"
+        }
+      },
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "description": "Runtime execution settings",
+      "properties": {
+        "parallelism": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Worker pool size; defaults to logical CPU count"
+        },
+        "timeout": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Timeout in seconds for long-running operations",
+          "default": 60
+        },
+        "fail_fast": {
+          "type": "boolean",
+          "description": "Stop on first benchmark failure",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "paths": {
+      "type": "object",
+      "description": "Override persistent data/state directories",
+      "properties": {
+        "data_dir": {
+          "type": ["string", "null"],
+          "description": "Data directory; defaults to $XDG_DATA_HOME/owlbench-cli"
+        },
+        "state_dir": {
+          "type": ["string", "null"],
+          "description": "State directory; defaults to $XDG_STATE_HOME/owlbench-cli"
+        }
+      },
+      "additionalProperties": false
+    },
+    "models": {
+      "type": "object",
+      "description": "Model registries for download and benchmarking",
+      "properties": {
+        "llm": {
+          "type": "array",
+          "description": "LLM models for llama.cpp benchmarking",
+          "items": { "$ref": "#/definitions/model_info" }
+        },
+        "whisper": {
+          "type": "array",
+          "description": "Whisper models for STT benchmarking",
+          "items": { "$ref": "#/definitions/model_info" }
+        },
+        "image_gen": {
+          "type": "array",
+          "description": "Image generation models for stable-diffusion.cpp benchmarking",
+          "items": { "$ref": "#/definitions/model_info" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "tools": {
+      "type": "object",
+      "description": "Tool installation and configuration",
+      "properties": {
+        "llama_cpp": {
+          "type": "object",
+          "description": "llama.cpp build/install settings",
+          "properties": {
+            "repo": {
+              "type": "string",
+              "description": "Git repository URL",
+              "default": "https://github.com/ggerganov/llama.cpp.git"
+            },
+            "pinned_tag": {
+              "type": ["string", "null"],
+              "description": "Pinned tag/commit for reproducible benchmarks"
+            },
+            "latest_ref": {
+              "type": "string",
+              "description": "Git ref for latest builds",
+              "default": "master"
+            },
+            "install_dir": {
+              "type": ["string", "null"],
+              "description": "Override install directory; supports ~ and env vars"
+            },
+            "prefer_prebuilt": {
+              "type": "boolean",
+              "description": "Try prebuilt GitHub release binaries before building from source",
+              "default": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "whisper_cpp": {
+          "type": "object",
+          "description": "whisper.cpp build/install settings",
+          "properties": {
+            "repo": {
+              "type": "string",
+              "description": "Git repository URL",
+              "default": "https://github.com/ggerganov/whisper.cpp.git"
+            },
+            "pinned_tag": {
+              "type": ["string", "null"],
+              "description": "Pinned tag/commit for reproducible benchmarks"
+            },
+            "latest_ref": {
+              "type": "string",
+              "description": "Git ref for latest builds",
+              "default": "master"
+            },
+            "install_dir": {
+              "type": ["string", "null"],
+              "description": "Override install directory; supports ~ and env vars"
+            },
+            "prefer_prebuilt": {
+              "type": "boolean",
+              "description": "Try prebuilt GitHub release binaries before building from source",
+              "default": true
+            },
+            "default_model": {
+              "type": "string",
+              "description": "Default whisper model name for benchmarks",
+              "default": "ggml-base.en.bin"
+            }
+          },
+          "additionalProperties": false
+        },
+        "stable_diffusion_cpp": {
+          "type": "object",
+          "description": "stable-diffusion.cpp build/install settings",
+          "properties": {
+            "repo": {
+              "type": "string",
+              "description": "Git repository URL",
+              "default": "https://github.com/leejet/stable-diffusion.cpp.git"
+            },
+            "pinned_tag": {
+              "type": ["string", "null"],
+              "description": "Pinned tag/commit for reproducible benchmarks"
+            },
+            "latest_ref": {
+              "type": "string",
+              "description": "Git ref for latest builds",
+              "default": "master"
+            },
+            "install_dir": {
+              "type": ["string", "null"],
+              "description": "Override install directory; supports ~ and env vars"
+            },
+            "default_model": {
+              "type": "string",
+              "description": "Default image gen model name for benchmarks",
+              "default": "z_image_turbo-Q4_K.gguf"
+            }
+          },
+          "additionalProperties": false
+        },
+        "vllm": {
+          "type": "object",
+          "description": "vLLM installation settings (via uv)",
+          "properties": {
+            "packages": {
+              "type": "object",
+              "description": "Backend-to-package mapping",
+              "additionalProperties": { "type": "string" }
+            },
+            "uv_args": {
+              "type": "array",
+              "description": "Extra arguments for uv tool install",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "benchmarks": {
+      "type": "array",
+      "description": "Custom benchmark definitions to run via 'bench run'",
+      "items": { "$ref": "#/definitions/benchmark_spec" }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "model_info": {
+      "type": "object",
+      "description": "Model download and metadata",
+      "required": ["name", "url"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Model filename (used for cache lookup and display)"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Download URL for the model file"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Expected file size in bytes (for verification)"
+        },
+        "sha256": {
+          "type": ["string", "null"],
+          "description": "SHA-256 hash for integrity verification"
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Human-readable description"
+        },
+        "parameters": {
+          "type": ["string", "null"],
+          "description": "Model parameter count (e.g., '9B', '244M')"
+        },
+        "quantization": {
+          "type": ["string", "null"],
+          "description": "Quantization method (e.g., 'Q4_K_M', 'Q8_0')"
+        }
+      },
+      "additionalProperties": false
+    },
+    "benchmark_spec": {
+      "type": "object",
+      "description": "Custom benchmark definition",
+      "required": ["name", "command"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique benchmark name"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["command", "llama_bench"],
+          "description": "Benchmark type",
+          "default": "command"
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Human-readable description"
+        },
+        "command": {
+          "type": "string",
+          "description": "Command to execute"
+        },
+        "args": {
+          "type": "array",
+          "description": "Command arguments",
+          "items": { "type": "string" }
+        },
+        "env": {
+          "type": "object",
+          "description": "Environment variables",
+          "additionalProperties": { "type": "string" }
+        },
+        "working_dir": {
+          "type": ["string", "null"],
+          "description": "Working directory; supports ~ and env vars"
+        },
+        "timeout_seconds": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Per-benchmark timeout override"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this benchmark is active",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
