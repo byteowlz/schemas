@@ -1,62 +1,115 @@
 {
+  "$id": "https://github.com/byteowlz/kyz/schemas/config.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/byteowlz/rust-workspace/schemas/config.schema.json",
-  "title": "rust-workspace configuration",
-  "description": "Configuration schema for rust-workspace",
+  "title": "kyz configuration",
+  "description": "Configuration schema for kyz",
   "type": "object",
   "properties": {
     "$schema": {
       "description": "JSON Schema reference for editor support",
       "type": "string"
     },
+    "aliases": {
+      "description": "Named aliases for `kyz exec`. Each alias resolves a set of secrets\nto inject as environment variables when wrapping a process.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/AliasConfig"
+      }
+    },
     "logging": {
       "description": "Logging configuration.",
-      "default": {
-        "level": "info"
-      },
       "allOf": [
         {
           "$ref": "#/definitions/LoggingConfig"
         }
-      ]
+      ],
+      "default": {
+        "level": "info"
+      }
     },
     "paths": {
       "description": "Custom paths for data and state directories.",
-      "default": {},
       "allOf": [
         {
           "$ref": "#/definitions/PathsConfig"
         }
-      ]
+      ],
+      "default": {}
     },
     "profile": {
       "description": "Active configuration profile.",
-      "default": "default",
-      "type": "string"
+      "type": "string",
+      "default": "default"
     },
     "runtime": {
       "description": "Runtime behavior configuration.",
-      "default": {
-        "fail_fast": true,
-        "timeout": 60
-      },
       "allOf": [
         {
           "$ref": "#/definitions/RuntimeConfig"
         }
-      ]
+      ],
+      "default": {
+        "fail_fast": true,
+        "timeout": 60
+      }
     }
   },
   "definitions": {
+    "AliasConfig": {
+      "description": "Named alias for kyz exec secret injection",
+      "type": "object",
+      "properties": {
+        "env_map": {
+          "description": "Explicit env-var mappings: `{ \"ENV_VAR\" = \"service/key:field\" }`.\n\nThese override the default field-name uppercasing for specific fields.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "secrets": {
+          "description": "Explicit secret references as `\"service/key\"` strings.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "description": "Tags to match. All secrets with *any* of these tags are included.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "LogLevel": {
       "description": "Log level enumeration for schema validation.",
-      "type": "string",
-      "enum": [
-        "error",
-        "warn",
-        "info",
-        "debug",
-        "trace"
+      "oneOf": [
+        {
+          "description": "Only emit error-level messages.",
+          "type": "string",
+          "const": "error"
+        },
+        {
+          "description": "Emit warnings and errors.",
+          "type": "string",
+          "const": "warn"
+        },
+        {
+          "description": "Emit informational messages and above (default).",
+          "type": "string",
+          "const": "info"
+        },
+        {
+          "description": "Emit debug diagnostics and above.",
+          "type": "string",
+          "const": "debug"
+        },
+        {
+          "description": "Emit all messages including fine-grained traces.",
+          "type": "string",
+          "const": "trace"
+        }
       ]
     },
     "LoggingConfig": {
@@ -65,16 +118,19 @@
       "properties": {
         "file": {
           "description": "Optional path for log file output. Supports ~ and environment variables.",
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "level": {
           "description": "Log level (error, warn, info, debug, trace).",
-          "default": "info",
           "allOf": [
             {
               "$ref": "#/definitions/LogLevel"
             }
-          ]
+          ],
+          "default": "info"
         }
       }
     },
@@ -84,11 +140,17 @@
       "properties": {
         "data_dir": {
           "description": "Directory for persistent data. Supports ~ and environment variables.",
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "state_dir": {
           "description": "Directory for state files. Supports ~ and environment variables.",
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
@@ -98,21 +160,27 @@
       "properties": {
         "fail_fast": {
           "description": "Stop on first error.",
-          "default": true,
-          "type": "boolean"
+          "type": "boolean",
+          "default": true
         },
         "parallelism": {
           "description": "Worker pool size. Defaults to logical CPU count when unset.",
-          "type": "integer",
+          "type": [
+            "integer",
+            "null"
+          ],
           "format": "uint",
-          "minimum": 1.0
+          "minimum": 1
         },
         "timeout": {
           "description": "Timeout in seconds for long-running operations (default: 60).",
-          "default": 60,
-          "type": "integer",
+          "type": [
+            "integer",
+            "null"
+          ],
           "format": "uint64",
-          "minimum": 1.0
+          "default": 60,
+          "minimum": 1
         }
       }
     }
