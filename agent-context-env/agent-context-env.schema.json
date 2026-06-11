@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.byteowlz.dev/agent-context-env/agent-context-env.schema.json",
+  "title": "AGENT_CTX Environment Contract (v1)",
+  "description": "Normalized AGENT_CTX_* environment metadata represented as a JSON object.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "AGENT_CTX_VERSION": { "type": "string", "const": "1" },
+    "AGENT_CTX_PLATFORM_NAME": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_PLATFORM_VERSION": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_HARNESS": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_RUN_MODE": { "type": "string", "enum": ["local", "runner", "container"] },
+    "AGENT_CTX_PLATFORM_SESSION_ID": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_WORKSPACE_ID": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_WORKSPACE_PATH": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_USER_ID": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_HARNESS_SESSION_ID": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_SESSION_NAME": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_READABLE_ID": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_MODEL": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_REQUEST_ID": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_CORRELATION_ID": { "type": "string", "minLength": 1 },
+    "AGENT_CTX_SANDBOX_PROFILE": { "type": "string", "minLength": 1 }
+  },
+  "required": [
+    "AGENT_CTX_VERSION",
+    "AGENT_CTX_PLATFORM_NAME",
+    "AGENT_CTX_PLATFORM_VERSION",
+    "AGENT_CTX_HARNESS",
+    "AGENT_CTX_RUN_MODE",
+    "AGENT_CTX_PLATFORM_SESSION_ID",
+    "AGENT_CTX_WORKSPACE_ID",
+    "AGENT_CTX_WORKSPACE_PATH",
+    "AGENT_CTX_USER_ID"
+  ]
+}
