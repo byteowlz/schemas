@@ -71,6 +71,32 @@
         },
         "state_file": {
           "type": ["string", "null"]
+        },
+        "bundle_dir": {
+          "type": ["string", "null"],
+          "description": "Central directory where ctx context bundles are stored."
+        }
+      },
+      "additionalProperties": false
+    },
+    "ocr": {
+      "type": "object",
+      "description": "OCR backend configuration for bundle image OCR.",
+      "properties": {
+        "command": {
+          "type": "string",
+          "default": "ocrs",
+          "description": "Command used to run OCR on bundle images."
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "auto_crops": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically OCR crops when they are created."
         }
       },
       "additionalProperties": false
