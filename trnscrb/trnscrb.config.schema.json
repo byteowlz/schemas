@@ -1,0 +1,265 @@
+{
+  "$id": "https://github.com/byteowlz/trnscrb/schemas/config.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "trnscrb configuration",
+  "description": "Configuration schema for trnscrb",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "description": "JSON Schema reference for editor support",
+      "type": "string"
+    },
+    "diarization": {
+      "description": "Diarization backend configuration.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DiarizationConfig"
+        }
+      ],
+      "default": {
+        "execution_mode": "cpu"
+      }
+    },
+    "logging": {
+      "description": "Logging configuration.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/LoggingConfig"
+        }
+      ],
+      "default": {
+        "level": "info"
+      }
+    },
+    "paths": {
+      "description": "Custom paths for data and state directories.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PathsConfig"
+        }
+      ],
+      "default": {}
+    },
+    "profile": {
+      "description": "Active configuration profile.",
+      "type": "string",
+      "default": "default"
+    },
+    "runtime": {
+      "description": "Runtime behavior configuration.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/RuntimeConfig"
+        }
+      ],
+      "default": {
+        "fail_fast": true,
+        "timeout": 60
+      }
+    },
+    "speakers": {
+      "description": "Speaker registry configuration.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/SpeakersConfig"
+        }
+      ],
+      "default": {
+        "confident_threshold": 0.6,
+        "tentative_threshold": 0.45
+      }
+    },
+    "transcription": {
+      "description": "Transcription backend configuration.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/TranscriptionConfig"
+        }
+      ],
+      "default": {
+        "default_language": "auto",
+        "ffmpeg_bin": "ffmpeg",
+        "parakeet_bin": "/home/wismut/byteowlz/external-repos/parakeet-dist/parakeet-v0.4.0-bin-linux-cpu-x64/parakeet-cli",
+        "parakeet_model": "~/Models/Parakeet/tdt-0.6b-v3-q8_0.gguf",
+        "whisper_bin": "whisper-cli",
+        "whisper_model": "~/Models/Whisper/ggml-large-v3-turbo-q8_0.bin"
+      }
+    }
+  },
+  "definitions": {
+    "DiarizationConfig": {
+      "description": "Diarization backend configuration",
+      "type": "object",
+      "properties": {
+        "execution_mode": {
+          "description": "Execution mode for the diarization backend: `cpu` (default, always\navailable), `coreml`/`coreml-fast` (macOS Apple Silicon, requires\nbuilding with the `speakrs-coreml` cargo feature), or `cuda`/`cuda-fast`\n(NVIDIA, requires the `speakrs-cuda` cargo feature and CUDA toolkit).\nModes without the matching build feature fall back to `cpu` with a\nwarning. See `docs/diarization-acceleration.md`.",
+          "type": "string",
+          "default": "cpu"
+        },
+        "model_dir": {
+          "description": "Optional local directory of diarization models. When empty, models are\ndownloaded from Hugging Face on first use. Supports ~ and env vars.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "LogLevel": {
+      "description": "Log level enumeration for schema validation.",
+      "oneOf": [
+        {
+          "description": "Only emit error-level messages.",
+          "type": "string",
+          "const": "error"
+        },
+        {
+          "description": "Emit warnings and errors.",
+          "type": "string",
+          "const": "warn"
+        },
+        {
+          "description": "Emit informational messages and above (default).",
+          "type": "string",
+          "const": "info"
+        },
+        {
+          "description": "Emit debug diagnostics and above.",
+          "type": "string",
+          "const": "debug"
+        },
+        {
+          "description": "Emit all messages including fine-grained traces.",
+          "type": "string",
+          "const": "trace"
+        }
+      ]
+    },
+    "LoggingConfig": {
+      "description": "Logging configuration",
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "Optional path for log file output. Supports ~ and environment variables.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "level": {
+          "description": "Log level (error, warn, info, debug, trace).",
+          "allOf": [
+            {
+              "$ref": "#/definitions/LogLevel"
+            }
+          ],
+          "default": "info"
+        }
+      }
+    },
+    "PathsConfig": {
+      "description": "Custom paths for data and state directories",
+      "type": "object",
+      "properties": {
+        "data_dir": {
+          "description": "Directory for persistent data. Supports ~ and environment variables.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state_dir": {
+          "description": "Directory for state files. Supports ~ and environment variables.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "RuntimeConfig": {
+      "description": "Runtime behavior configuration",
+      "type": "object",
+      "properties": {
+        "fail_fast": {
+          "description": "Stop on first error.",
+          "type": "boolean",
+          "default": true
+        },
+        "parallelism": {
+          "description": "Worker pool size. Defaults to logical CPU count when unset.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 1
+        },
+        "timeout": {
+          "description": "Timeout in seconds for long-running operations (default: 60).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "default": 60,
+          "minimum": 1
+        }
+      }
+    },
+    "SpeakersConfig": {
+      "description": "Speaker registry configuration",
+      "type": "object",
+      "properties": {
+        "confident_threshold": {
+          "description": "Cosine similarity at or above which a registry match uses the real name.",
+          "type": "number",
+          "format": "double",
+          "default": 0.6
+        },
+        "tentative_threshold": {
+          "description": "Cosine similarity at or above which a match is shown tentatively (e.g. `Name?`).",
+          "type": "number",
+          "format": "double",
+          "default": 0.45
+        }
+      }
+    },
+    "TranscriptionConfig": {
+      "description": "Transcription backend configuration",
+      "type": "object",
+      "properties": {
+        "default_language": {
+          "description": "Default language code, or \"auto\" to detect.",
+          "type": "string",
+          "default": "auto"
+        },
+        "ffmpeg_bin": {
+          "description": "ffmpeg binary name or path.",
+          "type": "string",
+          "default": "ffmpeg"
+        },
+        "parakeet_bin": {
+          "description": "parakeet-cli binary name or path.",
+          "type": "string",
+          "default": "/home/wismut/byteowlz/external-repos/parakeet-dist/parakeet-v0.4.0-bin-linux-cpu-x64/parakeet-cli"
+        },
+        "parakeet_model": {
+          "description": "Path to the parakeet.cpp GGUF model. Supports ~ and environment variables.",
+          "type": "string",
+          "default": "~/Models/Parakeet/tdt-0.6b-v3-q8_0.gguf"
+        },
+        "whisper_bin": {
+          "description": "whisper.cpp CLI binary name or path.",
+          "type": "string",
+          "default": "whisper-cli"
+        },
+        "whisper_model": {
+          "description": "Path to the whisper.cpp GGML model. Supports ~ and environment variables.",
+          "type": "string",
+          "default": "~/Models/Whisper/ggml-large-v3-turbo-q8_0.bin"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/byteowlz/schemas/refs/heads/main/govnr/tool.schema.json",
+  "title": "byteowlz Tool Metadata",
+  "description": "Schema for tool.toml files used to generate byteowlz.com/toolz pages",
+  "type": "object",
+  "required": ["name", "title", "tagline", "description", "language", "category", "version", "license"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Tool identifier (used in URL: /toolz/<name>)",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable display name"
+    },
+    "tagline": {
+      "type": "string",
+      "description": "One-line description (shown in cards/previews)",
+      "maxLength": 100
+    },
+    "tagline_de": {
+      "type": "string",
+      "description": "German tagline (optional)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Multi-paragraph description (markdown supported)"
+    },
+    "description_de": {
+      "type": "string",
+      "description": "German description (optional)"
+    },
+    "language": {
+      "type": "string",
+      "description": "Primary programming language",
+      "enum": ["rust", "go", "python", "typescript", "javascript", "c", "cpp", "zig", "shell"]
+    },
+    "category": {
+      "type": "string",
+      "description": "Tool category for grouping",
+      "enum": ["toolz", "keyz", "playz"]
+    },
+    "version": {
+      "type": "string",
+      "description": "Current version (semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?(\\+[a-zA-Z0-9.]+)?$"
+    },
+    "license": {
+      "type": "string",
+      "description": "License identifier (SPDX)",
+      "examples": ["MIT", "Apache-2.0", "GPL-3.0", "BSD-3-Clause"]
+    },
+    "install": {
+      "type": "object",
+      "description": "Installation methods",
+      "properties": {
+        "homebrew": {
+          "type": "string",
+          "description": "Homebrew formula (macOS/Linux)"
+        },
+        "aur": {
+          "type": "string",
+          "description": "AUR package name (Arch Linux)"
+        },
+        "aur_cuda": {
+          "type": "string",
+          "description": "AUR package name for CUDA variant"
+        },
+        "cargo": {
+          "type": "string",
+          "description": "Cargo crate name (Rust)"
+        },
+        "go": {
+          "type": "string",
+          "description": "Go install path"
+        },
+        "npm": {
+          "type": "string",
+          "description": "npm package name"
+        },
+        "pip": {
+          "type": "string",
+          "description": "pip package name"
+        },
+        "binary": {
+          "type": "string",
+          "description": "Direct download URL pattern (use {version} and {platform} placeholders)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "links": {
+      "type": "object",
+      "description": "Related links",
+      "properties": {
+        "github": {
+          "type": "string",
+          "format": "uri",
+          "description": "GitHub repository URL"
+        },
+        "docs": {
+          "type": "string",
+          "format": "uri",
+          "description": "Documentation URL"
+        },
+        "changelog": {
+          "type": "string",
+          "format": "uri",
+          "description": "Changelog URL"
+        }
+      },
+      "additionalProperties": false
+    },
+    "features": {
+      "type": "array",
+      "description": "Key features (3-6 recommended)",
+      "items": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Feature title"
+          },
+          "title_de": {
+            "type": "string",
+            "description": "German feature title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Feature description"
+          },
+          "description_de": {
+            "type": "string",
+            "description": "German feature description"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "examples": {
+      "type": "array",
+      "description": "Code examples shown on the tool page",
+      "items": {
+        "type": "object",
+        "required": ["title", "code"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Example title"
+          },
+          "language": {
+            "type": "string",
+            "description": "Code language for syntax highlighting",
+            "default": "bash"
+          },
+          "code": {
+            "type": "string",
+            "description": "Example code"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "media": {
+      "type": "object",
+      "description": "Media assets",
+      "properties": {
+        "icon": {
+          "type": "string",
+          "description": "Icon file path relative to repo root (SVG preferred)"
+        },
+        "screenshot": {
+          "type": "string",
+          "description": "Screenshot/demo image path"
+        },
+        "video": {
+          "type": "string",
+          "description": "Demo video URL (YouTube/Vimeo embed or direct MP4)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "meta": {
+      "type": "object",
+      "description": "Optional metadata",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Keywords for search/SEO"
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["linux", "macos", "windows", "ios", "android"]
+          },
+          "description": "Target platforms"
+        },
+        "min_rust_version": {
+          "type": "string",
+          "description": "Minimum required Rust version"
+        },
+        "related": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Related tool names"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["stable", "beta", "alpha", "experimental", "deprecated"],
+          "default": "stable",
+          "description": "Tool status"
+        },
+        "listed": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show on the /toolz overview page"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
