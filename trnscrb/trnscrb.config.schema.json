@@ -77,6 +77,7 @@
         }
       ],
       "default": {
+        "auto_download_models": true,
         "default_language": "auto",
         "ffmpeg_bin": "ffmpeg",
         "parakeet_bin": "/home/wismut/byteowlz/external-repos/parakeet-dist/parakeet-v0.4.0-bin-linux-cpu-x64/parakeet-cli",
@@ -229,6 +230,11 @@
       "description": "Transcription backend configuration",
       "type": "object",
       "properties": {
+        "auto_download_models": {
+          "description": "Download a missing parakeet model from Hugging Face on first use.",
+          "type": "boolean",
+          "default": true
+        },
         "default_language": {
           "description": "Default language code, or \"auto\" to detect.",
           "type": "string",
