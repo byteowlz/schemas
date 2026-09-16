@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.byteowlz.dev/gvnr-dpty-wire/gvnr-dpty-wire.schema.json",
+  "title": "gvnr ↔ dpty wire protocol",
+  "version": "0.1.0",
+  "stability": "draft",
+  "description": "HTTPS+token(overlay) protocol between gvnr (server/registry) and dpty (per-machine client). Canonical home: byteowlz/gvnr. gvnr resolves + lists ONLY; event-log entries never create operational truth.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["proto", "version", "kind", "payload"],
+  "properties": {
+    "proto": { "const": "gvnr-dpty" },
+    "version": { "const": "0.1.0" },
+    "kind": { "enum": ["register", "heartbeat", "list_runners", "resolve", "event"] },
+    "causation": {
+      "description": "Best-effort provenance; never authorization. Address is a routing hint only.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "origin": { "type": "string", "description": "AGENT_CTX_AGENT_ADDRESS / producer handle" },
+        "machine": { "type": "string", "description": "AGENT_CTX_MACHINE_ID" },
+        "purpose": { "type": "string" },
+        "request_id": { "type": "string" }
+      }
+    },
+    "payload": {
+      "oneOf": [
+        { "$ref": "#/$defs/RegisterReq" },
+        { "$ref": "#/$defs/RegisterResp" },
+        { "$ref": "#/$defs/HeartbeatReq" },
+        { "$ref": "#/$defs/HeartbeatResp" },
+        { "$ref": "#/$defs/ListRunnersReq" },
+        { "$ref": "#/$defs/ListRunnersResp" },
+        { "$ref": "#/$defs/ResolveReq" },
+        { "$ref": "#/$defs/ResolveResp" },
+        { "$ref": "#/$defs/EventMessage" }
+      ]
+    }
+  },
+  "$defs": {
+    "RegisterReq": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runner_id", "capability_snapshot"],
+      "description": "dpty → gvnr. POST /register. Establishes runner + its capability manifest snapshot for list_runners filtering.",
+      "properties": {
+        "runner_id": { "type": "string" },
+        "token_nonce": { "type": "string", "description": "one-time proof of the bearer token, not the token itself" },
+        "capability_snapshot": { "type": "object" }
+      }
+    },
+    "RegisterResp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runner_id", "accepted"],
+      "properties": {
+        "runner_id": { "type": "string" },
+        "accepted": { "type": "boolean" },
+        "ttl_seconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "HeartbeatReq": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runner_id", "ts"],
+      "description": "dpty → gvnr. POST /heartbeat. Liveness + resource deltas + asset freshness.",
+      "properties": {
+        "runner_id": { "type": "string" },
+        "ts": { "type": "string", "format": "date-time" },
+        "free_vram_gb": { "type": "number", "minimum": 0 },
+        "free_disk_gb": { "type": "number", "minimum": 0 },
+        "assets_changed": { "type": "boolean", "description": "true → gvnr requests a re-register/capability refresh" }
+      }
+    },
+    "HeartbeatResp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "next_beat_in"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "next_beat_in": { "type": "integer", "minimum": 1 },
+        "refresh_capability": { "type": "boolean" }
+      }
+    },
+    "ListRunnersReq": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "consumer → gvnr. GET /list_runners?cap=<recipe or capability query>. gvnr ranks capable runners.",
+      "properties": {
+        "cap": { "type": "string", "description": "capability filter (recipe id or min caps)" },
+        "limit": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "ListRunnersResp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runners"],
+      "properties": {
+        "runners": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["runner_id", "mesh_ip", "last_beat"],
+            "properties": {
+              "runner_id": { "type": "string" },
+              "mesh_ip": { "type": "string" },
+              "last_beat": { "type": "string", "format": "date-time" },
+              "rank": { "type": "number" },
+              "free_vram_gb": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "ResolveReq": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "consumer → gvnr. GET /resolve/{id}.",
+      "properties": { "id": { "type": "string" } }
+    },
+    "ResolveResp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "found"],
+      "properties": {
+        "id": { "type": "string" },
+        "found": { "type": "boolean" },
+        "address": { "type": "string", "description": "routing hint, never authorization" },
+        "ttl_seconds": { "type": "integer" }
+      }
+    },
+    "EventMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ts", "type"],
+      "description": "best-effort event-log entry. NEVER creates operational/fleet truth; only an audit trail.",
+      "properties": {
+        "ts": { "type": "string", "format": "date-time" },
+        "type": { "type": "string" },
+        "runner_id": { "type": "string" },
+        "payload": { "type": "object" }
+      }
+    }
+  }
+}

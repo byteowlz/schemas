@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.byteowlz.dev/dpty-recipe/dpty-recipe.schema.json",
+  "title": "dpty Recipe manifest",
+  "version": "0.1.0",
+  "stability": "draft",
+  "description": "How-to-run manifest verified and executed by dpty. Canonical home: byteowlz/dpty. Represented here as JSON; source files are TOML with identical names.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["definition", "requirements", "source", "runtime", "record"],
+  "properties": {
+    "definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "rev", "desc", "owner", "status"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9/._-]*$" },
+        "rev": { "type": "integer", "minimum": 1 },
+        "desc": { "type": "string" },
+        "owner": { "type": "string" },
+        "status": { "enum": ["prototype", "validated", "graduated"] }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accel", "ram"],
+      "properties": {
+        "accel": {
+          "description": "Backend-agnostic accelerator constraints (ADR-0007). Recipes match observed capability; cuda+sm-pinned recipes match ONLY a CUDA box of that arch.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["backends", "min_mem_gb"],
+          "properties": {
+            "backends": {
+              "type": "array",
+              "items": { "enum": ["cuda", "rocm", "level-zero", "metal-mps", "vulkan", "opencl", "directml"] },
+              "minItems": 1
+            },
+            "min_mem_gb": { "type": "number", "minimum": 0 },
+            "gpu_count": { "type": "integer", "minimum": 1, "default": 1 },
+            "arch": {
+              "description": "Per-backend architecture pin, e.g. sm_120a / gfx90a / m3.",
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "note": { "type": "string" }
+          }
+        },
+        "ram": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["gb"],
+          "properties": { "gb": { "type": "number", "minimum": 0 } }
+        },
+        "disks": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "source": {
+      "description": "Reproducibility descriptor. For model recipes: typed origin + pinned model metadata.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact"],
+      "properties": {
+        "artifact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": { "enum": ["git", "binary", "image", "local"] },
+            "url": { "type": "string" },
+            "ref": { "type": "string", "description": "git ref/rev for kind=git" },
+            "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+          }
+        },
+        "model": { "type": "string", "description": "org/model" },
+        "quant": { "type": "string", "description": "e.g. Q2 IQ2XXS" },
+        "total_params": { "type": "string" },
+        "context_max": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engine", "api"],
+      "properties": {
+        "engine": { "enum": ["vllm", "dwarfstar", "gguf", "ollama", "comfyui", "other"] },
+        "image": { "type": "string" },
+        "args": { "type": "array", "items": { "type": "string" } },
+        "env": { "type": "object", "additionalProperties": { "type": "string" } },
+        "api": { "enum": ["openai-compatible", "comfyui", "none"] },
+        "base_url": { "type": "string" },
+        "health": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "path": { "type": "string" },
+            "port": { "type": "integer" },
+            "expect": { "type": "string" }
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resume": { "enum": ["restart-manifest", "checkpoint", "none"] },
+        "restart": { "enum": ["on-failure", "always", "never"] },
+        "ctx_budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "max_model_len": { "type": "integer", "minimum": 0 } }
+        },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["group"],
+      "properties": {
+        "group": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
