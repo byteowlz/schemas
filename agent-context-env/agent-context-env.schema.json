@@ -2,6 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.byteowlz.dev/agent-context-env/agent-context-env.schema.json",
   "title": "AGENT_CTX Environment Contract (v2)",
+  "version": "2.0.0",
+  "stability": "accepted",
   "description": "Normalized AGENT_CTX_* environment metadata represented as a JSON object. Flat set of optional bags produced by independent layers (platform, multiplexer, harness, host). Missing layers are simply absent; consumers must tolerate any combination.",
   "type": "object",
   "additionalProperties": false,

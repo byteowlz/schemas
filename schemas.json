@@ -1,0 +1,36 @@
+{
+  "agent-context-env": {
+    "version": "2.0.0",
+    "stability": "accepted",
+    "canonical_repo": "byteowlz/schemas",
+    "path": "agent-context-env/agent-context-env.schema.json",
+    "changes": [
+      { "version": "2.0.0", "breaking": true, "note": "Introduced producer-map bags + multiplexer/agent + host/machine bags; VERSION const=2." }
+    ],
+    "consumers": ["trx", "mmry", "hstry", "skdlr", "agntz", "dpty"]
+  },
+  "dpty-recipe": {
+    "version": "0.1.0",
+    "stability": "draft",
+    "canonical_repo": "byteowlz/dpty",
+    "path": "dpty-recipe/dpty-recipe.schema.json",
+    "changes": [],
+    "consumers": ["dpty (verify/run)", "wismut/dpty-recipes (lint)"]
+  },
+  "dpty-capability": {
+    "version": "0.1.0",
+    "stability": "draft",
+    "canonical_repo": "byteowlz/dpty",
+    "path": "dpty-capability/dpty-capability.schema.json",
+    "changes": [],
+    "consumers": ["dpty (emit)", "gvnr (list_runners filter)"]
+  },
+  "gvnr-dpty-wire": {
+    "version": "0.1.0",
+    "stability": "draft",
+    "canonical_repo": "byteowlz/gvnr",
+    "path": "gvnr-dpty-wire/gvnr-dpty-wire.schema.json",
+    "changes": [],
+    "consumers": ["gvnr (server)", "dpty (client)"]
+  }
+}
