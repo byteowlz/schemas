@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.byteowlz.dev/dpty-recipe/dpty-recipe.schema.json",
   "title": "dpty Recipe manifest",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "stability": "draft",
   "description": "How-to-run manifest verified and executed by dpty. Canonical home: byteowlz/dpty. Represented here as JSON; source files are TOML with identical names.",
   "type": "object",
@@ -33,9 +33,9 @@
           "required": ["backends", "min_mem_gb"],
           "properties": {
             "backends": {
+              "description": "Accepted accelerator backends. May be empty ([]) to mean CPU-only: no accelerator required, match on ram/disk only (ADR-0007).",
               "type": "array",
-              "items": { "enum": ["cuda", "rocm", "level-zero", "metal-mps", "vulkan", "opencl", "directml"] },
-              "minItems": 1
+              "items": { "enum": ["cuda", "rocm", "level-zero", "metal-mps", "vulkan", "opencl", "directml"] }
             },
             "min_mem_gb": { "type": "number", "minimum": 0 },
             "gpu_count": { "type": "integer", "minimum": 1, "default": 1 },
@@ -79,7 +79,22 @@
         "model": { "type": "string", "description": "org/model" },
         "quant": { "type": "string", "description": "e.g. Q2 IQ2XXS" },
         "total_params": { "type": "string" },
-        "context_max": { "type": "integer", "minimum": 0 }
+        "context_max": { "type": "integer", "minimum": 0 },
+        "update": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Declared maintenance steps for `dpty update` (stop -> steps -> re-place -> health). The daemon never runs these; the CLI orchestrates the window.",
+            "required": ["cwd", "steps"],
+            "properties": {
+                "cwd": { "type": "string", "description": "directory the steps run in (the checkout being updated)" },
+                "steps": {
+                    "type": "array",
+                    "description": "ordered argv steps; first non-zero exit fails the update loudly",
+                    "items": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+                },
+                "timeout_secs": { "type": "integer", "minimum": 1, "description": "per-step timeout (default 1800)" }
+            }
+        }
       }
     },
     "runtime": {
@@ -87,7 +102,7 @@
       "additionalProperties": false,
       "required": ["engine", "api"],
       "properties": {
-        "engine": { "enum": ["vllm", "dwarfstar", "gguf", "ollama", "comfyui", "other"] },
+        "engine": { "enum": ["vllm", "sglang", "dwarfstar", "gguf", "ollama", "comfyui", "other"] },
         "image": { "type": "string" },
         "args": { "type": "array", "items": { "type": "string" } },
         "env": { "type": "object", "additionalProperties": { "type": "string" } },
@@ -115,7 +130,9 @@
           "additionalProperties": false,
           "properties": { "max_model_len": { "type": "integer", "minimum": 0 } }
         },
-        "notes": { "type": "array", "items": { "type": "string" } }
+        "notes": { "type": "array", "items": { "type": "string" } },
+        "supervisor": { "enum": ["dpty", "init", "external"], "description": "Who owns the runtime process. dpty = spawned by the daemon (legacy; dies on a dptyd restart). init = delegated to its own platform unit (systemd/launchd) so it survives a dptyd restart. external = dptyd adopts a pre-existing init unit named by init_unit." },
+        "init_unit": { "type": "string", "description": "Platform init unit to adopt/manage (required for supervisor=external; optional override for init)." }
       }
     },
     "record": {
