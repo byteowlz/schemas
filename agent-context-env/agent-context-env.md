@@ -1,5 +1,11 @@
 # AGENT_CTX Environment Contract (v2)
 
+> Maintenance moved on 2026-10-07 to the standalone `wismut/agent-ctx` repository:
+> `ssh://git@forgejo/wismut/agent-ctx.git` (local checkout: `../agent-ctx`).
+> See its `PROPOSAL.md` for draft v3, independent execution facts and unknown defaults,
+> and `docs/status.md` for terminal/headless status integration. This v2 document and
+> schema URL remain a frozen compatibility reference; v3 is not a deployed migration.
+
 Status: Draft v2 (implementation reference)
 Scope: Cross-tool runtime context via environment variables
 

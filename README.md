@@ -2,6 +2,14 @@
 
 Central repository for JSON schemas used across the byteowlz ecosystem.
 
+## AGENT_CTX contract ownership
+
+AGENT_CTX development moved to `wismut/agent-ctx` on Forgejo
+(`ssh://git@forgejo/wismut/agent-ctx.git`). Its `PROPOSAL.md` and draft v3 schema
+replace overloaded run mode with independent execution facts and unknown defaults.
+The existing [v2 contract](agent-context-env/agent-context-env.md), schema path and
+manifest entry remain available for compatibility; they have not been promoted to v3.
+
 ## Overview
 
 This repository contains JSON schemas that ensure consistency and validation across multiple projects:
